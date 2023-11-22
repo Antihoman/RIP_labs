@@ -1,5 +1,23 @@
-<html>
-    <h1>
-        {{ .title }}
-    </h1>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <title>Список услуг</title>
+</head>
+
+<body>
+    {{range .Services}}
+    <div class="service-card">
+        <a href="/service/{{.ID}}">
+        <img src="{{.ImageURL}}" alt="{{.Name}}">
+        </a>
+        <h2>{{.Name}}</h2>
+        <p>Фаза: {{.Phase}}</p>
+    </div>
+    {{end}}
+</body>
+
 </html>

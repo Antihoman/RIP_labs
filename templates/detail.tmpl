@@ -1,0 +1,27 @@
+<!-- detail.tmpl -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <title>Подробная информация</title>
+</head>
+
+<body>
+    <div class="detail-card">
+        <a href="/services" class="back-link">Назад к списку услуг</a>
+        <div class="detail-content">
+            <img src="{{.ImageURL}}" alt="{{.Name}}">
+            <div class="detail-info">
+                <h1>{{.Name}}</h1>
+                <p>Описание: {{.Description}}</p>
+                <p>Фаза: {{.Phase}}</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
