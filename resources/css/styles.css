@@ -15,7 +15,7 @@ body {
 }
 
 .service-card {
-    width: 350px;
+    width: 370px;
     height: 600px;
     text-align: center;
     transition: transform 0.3s;
