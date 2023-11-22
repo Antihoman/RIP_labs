@@ -9,14 +9,24 @@
 </head>
 
 <body>
-    {{range .Services}}
-    <div class="service-card">
-        <a href="/service/{{.ID}}">
-        <img src="{{.ImageURL}}" alt="{{.Name}}">
-        </a>
-        <h2>{{.Name}}</h2>
-        <p>Фаза: {{.Phase}}</p>
+    <div class="search-container">
+        <form action="/services" method="get" class="filter-form">
+            <label for="filter">Фильтр по наименованию:</label>
+            <div class="search-input">
+                <input type="text" id="filter" name="filter" value="{{.Filter}}" placeholder="Введите наименование">
+                <button type="submit"><img src="/image/search-icon.png" alt="Search"></button>
+            </div>
+        </form>
     </div>
+
+    {{range .Services}}
+        <a href="/service/{{.ID}}" class="service-card">
+            <img src="{{.ImageURL}}" alt="{{.Name}}">
+            <div class="service-info">
+                <h2>{{.Name}}</h2>
+                <p>Фаза: {{.Phase}}</p>
+            </div>
+        </a>
     {{end}}
 </body>
 

@@ -21,11 +21,8 @@ func StartServer() {
 	r.LoadHTMLGlob("templates/*")
 
 	r.GET("/services", func(c *gin.Context) {
-		data := struct {
-			Services []Service
-		}{
-			Services: GetAllServices(),
-		}
+		filter := c.Query("filter")
+		data := GetAllServices(filter)
 		c.HTML(http.StatusOK, "index.tmpl", data)
 	})
 

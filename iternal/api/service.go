@@ -1,11 +1,20 @@
 package api
 
+import (
+	"strings"
+)
+
 type Service struct {
 	ID 			int
 	Name        string
 	Description string
 	Phase       string
 	ImageURL    string
+}
+
+type FilteredServices struct {
+	Services []Service
+	Filter   string
 }
 
 var services = []Service{
@@ -20,8 +29,27 @@ var services = []Service{
 	{8, "Теплокровность", "Описание карточки 3", "Питание", "/image/img9.png"},
 }
 
-func GetAllServices() []Service {
-	return services
+func GetAllServices(filter string) FilteredServices {
+	var filteredServices []Service
+
+	if filter == "" {
+		filteredServices = services
+	} else {
+		for _, s := range services {
+			if containsIgnoreCase(s.Name, filter) {
+				filteredServices = append(filteredServices, s)
+			}
+		}
+	}
+
+	return FilteredServices{
+		Services: filteredServices,
+		Filter:   filter,
+	}
+}
+
+func containsIgnoreCase(s, substr string) bool {
+	return strings.Contains(strings.ToLower(s), strings.ToLower(substr))
 }
 
 func GetServiceByIndex(index int) Service {
