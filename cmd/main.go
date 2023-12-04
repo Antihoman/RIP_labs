@@ -1,7 +1,7 @@
 package main
 
 import (
-	"lab1/iternal/api"
+	"lab1/internal/api"
 	
 	"log"
 )
