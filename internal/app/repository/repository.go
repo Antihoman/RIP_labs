@@ -27,7 +27,7 @@ func New(dsn string) (*Repository, error) {
 
 func (r *Repository) GetCardByID(id string) (*ds.Card, error) { // ?
 	card := &ds.Card{}
-	err := r.db.Where("card_id = ?", id).First(card).Error
+	err := r.db.Where("uuid = ?", id).First(card).Error
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (r *Repository) GetCardByName(Name string) ([]ds.Card, error) {
 }
 
 func (r *Repository) DeleteCard(id string) error {
-	err := r.db.Exec("UPDATE cards SET is_deleted = ? WHERE card_id = ?", true, id).Error
+	err := r.db.Exec("UPDATE cards SET is_deleted = ? WHERE uuid = ?", true, id).Error
 	if err != nil {
 		return err
 	}
