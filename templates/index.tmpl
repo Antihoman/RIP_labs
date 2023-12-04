@@ -10,21 +10,21 @@
 
 <body>
     <div class="search-container">
-        <form action="/services" method="get" class="filter-form">
+        <form action="/cards" method="get" class="filter-form">
             <label for="filter">Фильтр по наименованию:</label>
             <div class="search-input">
-                <input type="text" id="filter" name="filter" value="{{.Filter}}" placeholder="Введите наименование">
+                <input type="text" id="filter" name="Name" value="{{.Name}}" placeholder="Введите наименование">
                 <button type="submit"><img src="/image/search-icon.png" alt="Search"></button>
             </div>
         </form>
     </div>
 
-    {{range .Services}}
-        <a href="/service/{{.ID}}" class="service-card">
-            <img src="{{.ImageURL}}" alt="{{.Name}}">
+    {{range $key, $value := .Cards}}
+        <a href="/cards/{{.UUID}}" class="service-card">
+            <img src="{{$value.ImageURL}}" alt="{{$value.Name}}">
             <div class="service-info">
-                <h2>{{.Name}}</h2>
-                <p>Фаза: {{.Phase}}</p>
+                <h2>{{$value.Name}}</h2>
+                <p>Тип:{{$value.Type}}</p>
             </div>
         </a>
     {{end}}
