@@ -76,7 +76,6 @@ func (app *Application) DeleteCard(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("получатель не найден"))
 		return
 	}
-	card.ImageURL = nil
 	card.IsDeleted = true
 	if err := app.repo.SaveCard(card); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
