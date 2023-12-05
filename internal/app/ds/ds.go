@@ -9,6 +9,7 @@ type User struct {
 	Moderator bool   `json:"moderator"`
 	Login     string `gorm:"size:30;not null" json:"login"`
 	Password  string `gorm:"size:40;not null" json:"-"`
+	Name      string `gorm:"size:50;not null"  json:"name"`
 }
 
 type Card struct {
