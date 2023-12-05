@@ -194,8 +194,6 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		return
 	}
 
-	
-
 	turn, err := app.repo.GetTurnById(request.URI.TurnId, app.getCustomer())
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

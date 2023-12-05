@@ -27,26 +27,24 @@ func (app *Application) Run() {
 
 	r.Use(ErrorHandler())
 
-	// Услуги - получатели
-	r.GET("/api/cards", app.GetAllCards)                                     // Список с поиском
-	r.GET("/api/cards/:card_id", app.GetCard)                           // Одна услуга
-	r.DELETE("/api/cards/:card_id", app.DeleteCard)              // Удаление
-	r.PUT("/api/cards/:card_id", app.ChangeCard)                 // Изменение
-	r.POST("/api/cards", app.AddCard)                                    // Добавление
-	r.POST("/api/cards/:card_id/add_to_turn", app.AddToTurn) // Добавление в заявку
+	r.GET("/api/cards", app.GetAllCards)
+	r.GET("/api/cards/:card_id", app.GetCard)
+	r.DELETE("/api/cards/:card_id", app.DeleteCard)
+	r.PUT("/api/cards/:card_id", app.ChangeCard)
+	r.POST("/api/cards", app.AddCard)
+	r.POST("/api/cards/:card_id/add_to_turn", app.AddToTurn)
 
-	// Заявки - уведомления
-	r.GET("/api/turns", app.GetAllTurns)                                                       // Список (отфильтровать по дате формирования и статусу)
-	r.GET("/api/turns/:turn_id", app.GetTurn)                                          // Одна заявка
-	r.PUT("/api/turns/:turn_id/update", app.UpdateTurn)                                // Изменение (добавление транспорта)
-	r.DELETE("/api/turns/:turn_id", app.DeleteTurn)                             //Удаление
-	r.DELETE("/api/turns/:turn_id/delete_card/:card_id", app.DeleteFromTurn) // Изменеие (удаление услуг)
-	r.PUT("/api/turns/:turn_id/user_confirm", app.UserConfirm)                                 // Сформировать создателем
-	r.PUT("/api/turns/:turn_id/moderator_confirm", app.ModeratorConfirm)                        // Завершить отклонить модератором
+	r.GET("/api/turns", app.GetAllTurns)
+	r.GET("/api/turns/:turn_id", app.GetTurn)
+	r.PUT("/api/turns/:turn_id/update", app.UpdateTurn)
+	r.DELETE("/api/turns/:turn_id", app.DeleteTurn)
+	r.DELETE("/api/turns/:turn_id/delete_card/:card_id", app.DeleteFromTurn)
+	r.PUT("/api/turns/:turn_id/user_confirm", app.UserConfirm)
+	r.PUT("/api/turns/:turn_id/moderator_confirm", app.ModeratorConfirm)
 
 	r.Static("/image", "./resources/images")
 	r.Static("/css", "./resources/css")
-	r.Run("localhost:8080") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run("localhost:8080")
 	log.Println("Server down")
 }
 
