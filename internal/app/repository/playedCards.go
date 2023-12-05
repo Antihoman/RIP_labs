@@ -68,8 +68,8 @@ func (r *Repository) GetTurnContent(turnId string) ([]ds.Card, error) {
 	var cards []ds.Card
 
 	err := r.db.Table("played_cards").
-		Select("cards.*").
-		Joins("JOIN cards ON played_cards.card_id = card.uuid").
+		Select("card.*").
+		Joins("JOIN card ON played_cards.card_id = card.uuid").
 		Where(ds.PlayedCards{TurnId: turnId}).
 		Scan(&cards).Error
 

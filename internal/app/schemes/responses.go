@@ -5,17 +5,17 @@ import (
 )
 
 type AllCardsResponse struct {
-	Cards []ds.Card `json:"recipients"`
+	Card []ds.Card `json:"card"`
 }
 
 type TurnShort struct {
 	UUID      string `json:"uuid"`
-	CardCount int    `json:"recipient_count"`
+	CardCount int    `json:"card_count"`
 }
 
 type GetAllCardsResponse struct {
 	DraftTurn *TurnShort `json:"draft_turn"`
-	Cards     []ds.Card  `json:"recipients"`
+	Card      []ds.Card  `json:"card"`
 }
 
 type AllTurnsResponse struct {
@@ -23,8 +23,8 @@ type AllTurnsResponse struct {
 }
 
 type TurnResponse struct {
-	Turn  TurnOutput `json:"turn"`
-	Cards []ds.Card  `json:"recipients"`
+	Turn TurnOutput `json:"turn"`
+	Card []ds.Card  `json:"card"`
 }
 
 type UpdateTurnResponse struct {

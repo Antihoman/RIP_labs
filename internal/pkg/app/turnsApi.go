@@ -54,7 +54,7 @@ func (app *Application) GetTurn(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, schemes.TurnResponse{Turn: schemes.ConvertTurn(turn), Cards: cards})
+	c.JSON(http.StatusOK, schemes.TurnResponse{Turn: schemes.ConvertTurn(turn), Card: cards})
 }
 
 func (app *Application) UpdateTurn(c *gin.Context) {
@@ -141,7 +141,7 @@ func (app *Application) DeleteFromTurn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, schemes.AllCardsResponse{Cards: cards})
+	c.JSON(http.StatusOK, schemes.AllCardsResponse{Card: cards})
 }
 
 func (app *Application) UserConfirm(c *gin.Context) {

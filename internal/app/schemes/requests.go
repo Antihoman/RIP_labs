@@ -11,12 +11,10 @@ type CardRequest struct {
 	CardId string `uri:"card_id" binding:"required,uuid"`
 }
 
-// вопрос
 type GetAllCardsRequest struct {
-	FIO string `form:"fio"`
+	Name string `form:"name"`
 }
 
-// вопрос
 type AddCardRequest struct {
 	ds.Card
 	Image *multipart.FileHeader `form:"image" json:"image"`

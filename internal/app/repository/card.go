@@ -44,7 +44,7 @@ func (r *Repository) GetCardByName(Name string) ([]ds.Card, error) {
 	var cards []ds.Card
 
 	err := r.db.
-		Where("LOWER(cards.name) LIKE ?", "%"+strings.ToLower(Name)+"%").Where("is_deleted = ?", false).
+		Where("LOWER(card.name) LIKE ?", "%"+strings.ToLower(Name)+"%").Where("is_deleted = ?", false).
 		Find(&cards).Error
 
 	if err != nil {
