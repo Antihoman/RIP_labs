@@ -1,4 +1,4 @@
-MinioEndpoint = "localhost:8080"
+MinioEndpoint = "localhost:9001"
 BucketName = "images"
 ServiceHost = "0.0.0.0"
 ServicePort = 80 

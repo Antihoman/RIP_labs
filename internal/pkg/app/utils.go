@@ -19,8 +19,8 @@ func (app *Application) uploadImage(c *gin.Context, image *multipart.FileHeader,
 	defer src.Close()
 
 	extension := filepath.Ext(image.Filename)
-	if extension != ".jpg" && extension != ".jpeg" {
-		return nil, fmt.Errorf("разрешены только jpeg изображения")
+	if extension != ".jpg" && extension != ".jpeg" && extension != ".png" {
+		return nil, fmt.Errorf("разрешены только jpeg и png изображения")
 	}
 	imageName := UUID + extension
 

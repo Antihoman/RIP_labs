@@ -14,18 +14,18 @@ type User struct {
 
 type Card struct {
 	UUID        string  `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"uuid" binding:"-"`
-	ImageURL    *string `gorm:"size:100" json:"image_url" binding:"-"`
+	ImageURL    *string `gorm:"type:varchar(100)" json:"image_url" binding:"-"`
 	IsDeleted   bool    `gorm:"not null;default:false" json:"-" binding:"-"`
 	Type        string  `gorm:"size:50;not null" form:"type" json:"type" binding:"required,max=50"`
-	Name        string  `gorm:"size:50;not null" form:"cargo" json:"cargo" binding:"required,max=50"`
+	Name        string  `gorm:"size:50;not null" form:"name" json:"name" binding:"required,max=50"`
 	Description string  `gorm:"size:200;not null" form:"description" json:"description" binding:"required,max=200"`
 }
 
 const DRAFT string = "черновик"
-const FORMED string = "сформирован"
-const COMPELTED string = "завершён"
-const REJECTED string = "отклонён"
-const DELETED string = "удалён"
+const FORMED string = "Сформирован"
+const COMPELTED string = "Завершён"
+const REJECTED string = "Отклонён"
+const DELETED string = "Удален"
 
 type Turn struct {
 	UUID           string     `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`

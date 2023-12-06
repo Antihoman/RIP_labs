@@ -14,7 +14,8 @@ func (r *Repository) GetAllTurns(formationDateStart, formationDateEnd *time.Time
 	var turns []ds.Turn
 	query := r.db.Preload("Customer").Preload("Moderator").
 		Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
-		Where("status != ?", ds.DELETED)
+		Where("status != ?", ds.DELETED).
+		Where("status != ?", ds.DRAFT)
 
 	if formationDateStart != nil && formationDateEnd != nil {
 		query = query.Where("formation_date BETWEEN ? AND ?", *formationDateStart, *formationDateEnd)

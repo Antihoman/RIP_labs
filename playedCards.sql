@@ -14,9 +14,9 @@ DROP TABLE IF EXISTS "turns";
 CREATE TABLE "public"."turns" (
     "uuid" uuid DEFAULT gen_random_uuid() NOT NULL,
     "status" character varying(20) NOT NULL,
-    "creation_date" date NOT NULL,
-    "formation_date" date,
-    "completion_date" date,
+    "creation_date" timestamp NOT NULL,
+    "formation_date" timestamp,
+    "completion_date" timestamp,
     "moderator_id" uuid,
     "customer_id" uuid NOT NULL,
     "phase" character varying(50) NOT NULL,
