@@ -27,6 +27,10 @@
                 <p>Тип:{{$value.Type}}</p>
             </div>
         </a>
+        <form action="/cards" method="post">
+            <input type="hidden" name="delete" value="{{.UUID}}">
+            <input type="submit" value="Удалить" class="button-7" style="width: 10%;">
+        </form>
     {{end}}
 </body>
 
