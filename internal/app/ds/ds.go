@@ -42,8 +42,9 @@ type Turn struct {
 }
 
 type PlayedCards struct {
-	TurnId string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"turn_id"`
-	CardId string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"card_id"`
+	TurnId   string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"turn_id"`
+	CardId   string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"card_id"`
+	TakeFood uint   `gorm:"not null"`
 
 	Card *Card `gorm:"foreignKey:CardId" json:"card"`
 	Turn *Turn `gorm:"foreignKey:TurnId" json:"turn"`

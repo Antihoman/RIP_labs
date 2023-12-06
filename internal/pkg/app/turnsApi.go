@@ -223,3 +223,37 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 	}
 	c.Status(http.StatusOK)
 }
+
+func(app *Application) TakeFood(c* gin.Context){
+	var request schemes.DeleteFromTurnRequest
+	if err := c.ShouldBindUri(&request); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	// turn, err := app.repo.GetTurnById(request.TurnId, app.getCustomer())
+	// if err != nil {
+	// 	c.AbortWithError(http.StatusInternalServerError, err)
+	// 	return
+	// }
+	// if turn == nil {
+	// 	c.AbortWithError(http.StatusNotFound, fmt.Errorf("уведомление не найдено"))
+	// 	return
+	// }
+	// if turn.Status != ds.DRAFT {
+	// 	c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя редактировать уведомление со статусом: %s", turn.Status))
+	// 	return
+	// }
+
+	// if err := app.repo.DeleteFromTurn(request.TurnId, request.CardId); err != nil {
+	// 	c.AbortWithError(http.StatusInternalServerError, err)
+	// 	return
+	// }
+
+	// cards, err := app.repo.GetTurnContent(request.TurnId)
+	// if err != nil {
+	// 	c.AbortWithError(http.StatusInternalServerError, err)
+	// 	return
+	// }
+
+	// c.JSON(http.StatusOK, schemes.AllCardsResponse{Card: cards})
+}
