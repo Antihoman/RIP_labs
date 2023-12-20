@@ -26,6 +26,7 @@ type ChangeCardRequest struct {
 	Type        *string                `form:"type" json:"type" binding:"omitempty,max=30"`
 	Name        *string                `form:"name" json:"name" binding:"omitempty,max=50"`
 	Description *string                `form:"description" json:"description" binding:"omitempty,max=200"`
+	NeedFood    *uint				   `form:"needfood" json:"needfood"`
 }
 
 type AddToTurnRequest struct {

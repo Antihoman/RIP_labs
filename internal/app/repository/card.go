@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *Repository) GetCardByID(id string) (*ds.Card, error) { // ?
+func (r *Repository) GetCardByID(id string) (*ds.Card, error) {
 	card := &ds.Card{UUID: id}
 	err := r.db.First(card, "is_deleted = ?", false).Error
 	if err != nil {

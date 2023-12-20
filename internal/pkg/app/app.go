@@ -41,7 +41,6 @@ func (app *Application) Run() {
 	r.DELETE("/api/turns/:turn_id/delete_card/:card_id", app.DeleteFromTurn)
 	r.PUT("/api/turns/:turn_id/user_confirm", app.UserConfirm)
 	r.PUT("/api/turns/:turn_id/moderator_confirm", app.ModeratorConfirm)
-	r.PUT("/api/turns/:turn_id/take_food/:card_id", app.TakeFood)
 
 	r.Static("/image", "./resources/images")
 	r.Static("/css", "./resources/css")

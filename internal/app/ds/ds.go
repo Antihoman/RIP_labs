@@ -19,6 +19,7 @@ type Card struct {
 	Type        string  `gorm:"size:50;not null" form:"type" json:"type" binding:"required,max=50"`
 	Name        string  `gorm:"size:50;not null" form:"name" json:"name" binding:"required,max=50"`
 	Description string  `gorm:"size:200;not null" form:"description" json:"description" binding:"required,max=200"`
+	NeedFood    uint    `gorm:"not null" json:"needfood" form:"needfood" binding:"required"`
 }
 
 const DRAFT string = "черновик"
@@ -36,6 +37,7 @@ type Turn struct {
 	ModeratorId    *string    `json:"-"`
 	CustomerId     string     `gorm:"not null"`
 	Phase          string     `gorm:"size:50;not null"`
+	TakeFood       uint       `gorm:"not null" json:"takefood" form:"takefood" binding:"required"`
 
 	Moderator *User
 	Customer  User
@@ -44,7 +46,6 @@ type Turn struct {
 type PlayedCards struct {
 	TurnId   string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"turn_id"`
 	CardId   string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"card_id"`
-	TakeFood uint   `gorm:"not null"`
 
 	Card *Card `gorm:"foreignKey:CardId" json:"card"`
 	Turn *Turn `gorm:"foreignKey:TurnId" json:"turn"`
