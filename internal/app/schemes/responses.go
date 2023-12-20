@@ -1,9 +1,9 @@
 package schemes
 
 import (
+	"fmt"
 	"lab1/internal/app/ds"
 	"time"
-	"fmt"
 )
 
 type AllCardsResponse struct {
@@ -11,13 +11,13 @@ type AllCardsResponse struct {
 }
 
 type TurnShort struct {
-	UUID           string `json:"uuid"`
+	UUID      string `json:"uuid"`
 	CardCount int    `json:"card_count"`
 }
 
 type GetAllCardsResponse struct {
-	DraftTurn *TurnShort         `json:"draft_turn"`
-	Cards            []ds.Card `json:"cards"`
+	DraftTurn *TurnShort `json:"draft_turn"`
+	Cards     []ds.Card  `json:"cards"`
 }
 
 type AllTurnsResponse struct {
@@ -25,12 +25,12 @@ type AllTurnsResponse struct {
 }
 
 type TurnResponse struct {
-	Turn TurnOutput `json:"turn"`
-	Cards    []ds.Card  `json:"cards"`
+	Turn  TurnOutput `json:"turn"`
+	Cards []ds.Card  `json:"cards"`
 }
 
 type UpdateTurnResponse struct {
-	Turn TurnOutput  `json:"turns"`
+	Turn TurnOutput `json:"turns"`
 }
 
 type TurnOutput struct {
@@ -41,19 +41,19 @@ type TurnOutput struct {
 	CompletionDate *string `json:"completion_date"`
 	Moderator      *string `json:"moderator"`
 	Customer       string  `json:"customer"`
-	Phase      string `json:"turn_type"`
+	Phase          string  `json:"turn_type"`
 	SendingStatus  *string `json:"sending_status"`
 	TakeFood       uint    `json:"takefood"`
 }
 
 func ConvertTurn(turn *ds.Turn) TurnOutput {
 	output := TurnOutput{
-		UUID:         turn.UUID,
-		Status:       turn.Status,
-		CreationDate: turn.CreationDate.Format("2006-01-02 15:04:05"),
-		Phase:    turn.Phase,
+		UUID:          turn.UUID,
+		Status:        turn.Status,
+		CreationDate:  turn.CreationDate.Format("2006-01-02 15:04:05"),
+		Phase:         *turn.Phase,
 		SendingStatus: turn.SendingStatus,
-		Customer:     turn.Customer.Login,
+		Customer:      turn.Customer.Login,
 	}
 
 	if turn.FormationDate != nil {
