@@ -2,20 +2,22 @@ package schemes
 
 import (
 	"lab1/internal/app/ds"
+	"time"
+	"fmt"
 )
 
 type AllCardsResponse struct {
-	Card []ds.Card `json:"card"`
+	Cards []ds.Card `json:"cards"`
 }
 
 type TurnShort struct {
-	UUID      string `json:"uuid"`
+	UUID           string `json:"uuid"`
 	CardCount int    `json:"card_count"`
 }
 
 type GetAllCardsResponse struct {
-	DraftTurn *TurnShort `json:"draft_turn"`
-	Card      []ds.Card  `json:"card"`
+	DraftTurn *TurnShort         `json:"draft_turn"`
+	Cards            []ds.Card `json:"cards"`
 }
 
 type AllTurnsResponse struct {
@@ -24,11 +26,11 @@ type AllTurnsResponse struct {
 
 type TurnResponse struct {
 	Turn TurnOutput `json:"turn"`
-	Card []ds.Card  `json:"card"`
+	Cards    []ds.Card  `json:"cards"`
 }
 
 type UpdateTurnResponse struct {
-	Turn TurnOutput `json:"turns"`
+	Turn TurnOutput  `json:"turns"`
 }
 
 type TurnOutput struct {
@@ -39,7 +41,8 @@ type TurnOutput struct {
 	CompletionDate *string `json:"completion_date"`
 	Moderator      *string `json:"moderator"`
 	Customer       string  `json:"customer"`
-	TurnPhase      string  `json:"turnphase"`
+	Phase      string `json:"turn_type"`
+	SendingStatus  *string `json:"sending_status"`
 	TakeFood       uint    `json:"takefood"`
 }
 
@@ -48,9 +51,9 @@ func ConvertTurn(turn *ds.Turn) TurnOutput {
 		UUID:         turn.UUID,
 		Status:       turn.Status,
 		CreationDate: turn.CreationDate.Format("2006-01-02 15:04:05"),
-		TurnPhase:    turn.Phase,
-		Customer:     turn.Customer.Name,
-		TakeFood:     turn.TakeFood,
+		Phase:    turn.Phase,
+		SendingStatus: turn.SendingStatus,
+		Customer:     turn.Customer.Login,
 	}
 
 	if turn.FormationDate != nil {
@@ -64,8 +67,30 @@ func ConvertTurn(turn *ds.Turn) TurnOutput {
 	}
 
 	if turn.Moderator != nil {
-		output.Moderator = &turn.Moderator.Name
+		fmt.Println(turn.Moderator.Login)
+		output.Moderator = &turn.Moderator.Login
+		fmt.Println(*output.Moderator)
 	}
 
 	return output
+}
+
+type AddToTurnResp struct {
+	CardsCount int64 `json:"card_count"`
+}
+
+type LoginResp struct {
+	ExpiresIn   time.Duration `json:"expires_in"`
+	AccessToken string        `json:"access_token"`
+	TokenType   string        `json:"token_type"`
+}
+
+type SwaggerLoginResp struct {
+	ExpiresIn   int64  `json:"expires_in"`
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+}
+
+type RegisterResp struct {
+	Ok bool `json:"ok"`
 }

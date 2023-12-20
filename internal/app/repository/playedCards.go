@@ -10,12 +10,12 @@ import (
 	"lab1/internal/app/ds"
 )
 
-func (r *Repository) GetAllTurns(formationDateStart, formationDateEnd *time.Time, status string) ([]ds.Turn, error) {
+func (r *Repository) GetAllTurns(customerId *string, formationDateStart, formationDateEnd *time.Time, status string) ([]ds.Turn, error) {
 	var turns []ds.Turn
 	query := r.db.Preload("Customer").Preload("Moderator").
 		Where("LOWER(status) LIKE ?", "%"+strings.ToLower(status)+"%").
-		Where("status != ?", ds.DELETED).
-		Where("status != ?", ds.DRAFT)
+		Where("status != ?", ds.StatusDeleted).
+		Where("status != ?", ds.StatusDraft)
 
 	if formationDateStart != nil && formationDateEnd != nil {
 		query = query.Where("formation_date BETWEEN ? AND ?", *formationDateStart, *formationDateEnd)
@@ -32,7 +32,7 @@ func (r *Repository) GetAllTurns(formationDateStart, formationDateEnd *time.Time
 
 func (r *Repository) GetDraftTurn(customerId string) (*ds.Turn, error) {
 	turn := &ds.Turn{}
-	err := r.db.First(turn, ds.Turn{Status: ds.DRAFT, CustomerId: customerId}).Error
+	err := r.db.First(turn, ds.Turn{Status: ds.StatusDraft, CustomerId: customerId}).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -43,7 +43,7 @@ func (r *Repository) GetDraftTurn(customerId string) (*ds.Turn, error) {
 }
 
 func (r *Repository) CreateDraftTurn(customerId string) (*ds.Turn, error) {
-	turn := &ds.Turn{CreationDate: time.Now(), CustomerId: customerId, Status: ds.DRAFT}
+	turn := &ds.Turn{CreationDate: time.Now(), CustomerId: customerId, Status: ds.StatusDraft}
 	err := r.db.Create(turn).Error
 	if err != nil {
 		return nil, err
@@ -51,11 +51,14 @@ func (r *Repository) CreateDraftTurn(customerId string) (*ds.Turn, error) {
 	return turn, nil
 }
 
-func (r *Repository) GetTurnById(turnId, customerId string) (*ds.Turn, error) {
+func (r *Repository) GetTurnById(turnId string, userId *string) (*ds.Turn, error) {
 	turn := &ds.Turn{}
-	err := r.db.Preload("Moderator").Preload("Customer").
-		Where("status != ?", ds.DELETED).
-		First(turn, ds.Turn{UUID: turnId, CustomerId: customerId}).Error
+	query := r.db.Preload("Moderator").Preload("Customer").
+		Where("status != ?", ds.StatusDeleted)
+	if userId != nil {
+		query = query.Where("customer_id = ?", userId)
+	}
+	err := query.First(turn, ds.Turn{UUID: turnId}).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -94,4 +97,15 @@ func (r *Repository) DeleteFromTurn(turnId, cardId string) error {
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) CountCards(turnId string) (int64, error) {
+	var count int64
+	err := r.db.Model(&ds.PlayedCards{}).
+		Where("turn_id = ?", turnId).
+		Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }

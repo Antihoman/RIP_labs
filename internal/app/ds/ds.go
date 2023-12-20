@@ -1,15 +1,15 @@
 package ds
 
 import (
+	"lab1/internal/app/role"
 	"time"
 )
 
 type User struct {
 	UUID      string `gorm:"type:uuid;primary_key;default:gen_random_uuid()" json:"-"`
-	Moderator bool   `json:"moderator"`
+	Role      role.Role
 	Login     string `gorm:"size:30;not null" json:"login"`
 	Password  string `gorm:"size:40;not null" json:"-"`
-	Name      string `gorm:"size:50;not null" json:"name"`
 }
 
 type Card struct {
@@ -22,11 +22,15 @@ type Card struct {
 	NeedFood    uint    `gorm:"not null" json:"needfood" form:"needfood" binding:"required"`
 }
 
-const DRAFT string = "черновик"
-const FORMED string = "Сформирован"
-const COMPELTED string = "Завершён"
-const REJECTED string = "Отклонён"
-const DELETED string = "Удален"
+const StatusDraft string = "черновик"
+const StatusFormed string = "сформирован"
+const StatusCompleted string = "завершён"
+const StatusRejected string = "отклонён"
+const StatusDeleted string = "удалён"
+
+const SendingCompleted string = "отправлено"
+const SendingFailed string = "отправка отменена"
+const SendingStarted string = "отправка начата"
 
 type Turn struct {
 	UUID           string     `gorm:"type:uuid;primary_key;default:gen_random_uuid()"`
@@ -36,8 +40,9 @@ type Turn struct {
 	CompletionDate *time.Time `gorm:"type:timestamp"`
 	ModeratorId    *string    `json:"-"`
 	CustomerId     string     `gorm:"not null"`
-	Phase          string     `gorm:"size:50;not null"`
+	Phase          *string     `gorm:"size:50;not null"`
 	TakeFood       uint       `gorm:"not null" json:"takefood" form:"takefood" binding:"required"`
+	SendingStatus  *string    `gorm:"size:40"`
 
 	Moderator *User
 	Customer  User

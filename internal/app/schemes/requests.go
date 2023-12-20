@@ -8,7 +8,7 @@ import (
 )
 
 type CardRequest struct {
-	CardId string `uri:"card_id" binding:"required,uuid"`
+	CardId string `uri:"id" binding:"required,uuid"`
 }
 
 type GetAllCardsRequest struct {
@@ -26,11 +26,11 @@ type ChangeCardRequest struct {
 	Type        *string                `form:"type" json:"type" binding:"omitempty,max=30"`
 	Name        *string                `form:"name" json:"name" binding:"omitempty,max=50"`
 	Description *string                `form:"description" json:"description" binding:"omitempty,max=200"`
-	NeedFood    *uint				   `form:"needfood" json:"needfood"`
+	NeedFood    *uint	
 }
 
 type AddToTurnRequest struct {
-	CardId string `uri:"card_id" binding:"required,uuid"`
+	CardId string `uri:"id" binding:"required,uuid"`
 }
 
 type GetAllTurnsRequst struct {
@@ -40,31 +40,38 @@ type GetAllTurnsRequst struct {
 }
 
 type TurnRequest struct {
-	TurnId string `uri:"turn_id" binding:"required,uuid"`
+	TurnId string `uri:"id" binding:"required,uuid"`
 }
 
 type UpdateTurnRequest struct {
-	URI struct {
-		TurnId string `uri:"turn_id" binding:"required,uuid"`
-	}
 	TurnPhase string `form:"turn_phase" json:"turn_phase" binding:"required,max=50"`
 }
 
 type DeleteFromTurnRequest struct {
-	TurnId string `uri:"turn_id" binding:"required,uuid"`
-	CardId string `uri:"card_id" binding:"required,uuid"`
-}
-
-type UserConfirmRequest struct {
-	URI struct {
-		TurnId string `uri:"turn_id" binding:"required,uuid"`
-	}
-	Confirm bool `form:"confirm" binding:"required"`
+	CardId    string `uri:"id" binding:"required,uuid"`
 }
 
 type ModeratorConfirmRequest struct {
 	URI struct {
-		TurnId string `uri:"turn_id" binding:"required,uuid"`
+		TurnId string `uri:"id" binding:"required,uuid"`
 	}
-	Confirm bool `form:"confirm" binding:"required"`
+	Confirm *bool `form:"confirm" binding:"required"`
+}
+
+type LoginReq struct {
+	Login    string `form:"login" binding:"required,max=30"`
+	Password string `form:"password" binding:"required,max=30"`
+}
+
+type RegisterReq struct {
+	Login    string `form:"login" binding:"required,max=30"`
+	Password string `form:"password" binding:"required,max=30"`
+}
+
+type SendingReq struct {
+	URI struct {
+		TurnId string `uri:"id" binding:"required,uuid"`
+	}
+	SendingStatus *bool `json:"sending_status" form:"sending_status" binding:"required"`
+	Token string `json:"token" form:"token" binding:"required"`
 }

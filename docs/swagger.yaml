@@ -1,0 +1,480 @@
+basePath: /
+definitions:
+  app.SwaggerUpdateTurnRequest:
+    properties:
+      turn_type:
+        type: string
+    type: object
+  ds.Card:
+    properties:
+      description:
+        type: string
+      needfood:
+        type: integer
+      type:
+        type: string
+      name:
+        type: string
+      image_url:
+        type: string
+      uuid:
+        type: string
+    required:
+    - description
+    - needfood
+    - type
+    - name
+    type: object
+  schemes.AddToTurnResp:
+    properties:
+      card_count:
+        type: integer
+    type: object
+  schemes.AllTurnsResponse:
+    properties:
+      turns:
+        items:
+          $ref: '#/definitions/schemes.TurnOutput'
+        type: array
+    type: object
+  schemes.AllCardsResponse:
+    properties:
+      cards:
+        items:
+          $ref: '#/definitions/ds.Card'
+        type: array
+    type: object
+  schemes.GetAllCardsResponse:
+    properties:
+      draft_turn:
+        $ref: '#/definitions/schemes.TurnShort'
+      cards:
+        items:
+          $ref: '#/definitions/ds.Card'
+        type: array
+    type: object
+  schemes.LoginReq:
+    properties:
+      login:
+        maxLength: 30
+        type: string
+      password:
+        maxLength: 30
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  schemes.TurnOutput:
+    properties:
+      completion_date:
+        type: string
+      creation_date:
+        type: string
+      customer:
+        type: string
+      formation_date:
+        type: string
+      moderator:
+        type: string
+      turn_phase:
+        type: string
+      status:
+        type: string
+      uuid:
+        type: string
+    type: object
+  schemes.TurnResponse:
+    properties:
+      turn:
+        $ref: '#/definitions/schemes.TurnOutput'
+      cards:
+        items:
+          $ref: '#/definitions/ds.Card'
+        type: array
+    type: object
+  schemes.TurnShort:
+    properties:
+      card_count:
+        type: integer
+      uuid:
+        type: string
+    type: object
+  schemes.RegisterReq:
+    properties:
+      login:
+        maxLength: 30
+        type: string
+      password:
+        maxLength: 30
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  schemes.RegisterResp:
+    properties:
+      ok:
+        type: boolean
+    type: object
+  schemes.SwaggerLoginResp:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      token_type:
+        type: string
+    type: object
+  schemes.UpdateTurnResponse:
+    properties:
+      turns:
+        $ref: '#/definitions/schemes.TurnOutput'
+    type: object
+host: 127.0.0.1:80
+info:
+  contact: {}
+  title: Electronic turns
+  version: "1.0"
+paths:
+  /api/turns:
+    get:
+      description: Возвращает все ходы с фильтрацией по статусу и дате формирования
+      parameters:
+      - description: статус хода
+        in: query
+        name: status
+        type: string
+      - description: начальная дата формирования
+        in: query
+        name: formation_date_start
+        type: string
+      - description: конечная дата формирвания
+        in: query
+        name: formation_date_end
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AllTurnsResponse'
+      summary: Получить все хода
+      tags:
+      - Ходы
+  /api/turns/{turn_id}:
+    delete:
+      description: Удаляет ход по id
+      parameters:
+      - description: id хода
+        in: path
+        name: turn_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Удалить ход
+      tags:
+      - Ходы
+    get:
+      description: Возвращает подробную информацию об ходе и его типе
+      parameters:
+      - description: id хода
+        in: path
+        name: turn_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.TurnResponse'
+      summary: Получить одно ход
+      tags:
+      - Ходы
+    put:
+      description: Позволяет изменить тип хода и возвращает обновлённые данные
+      parameters:
+      - description: id хода
+        in: path
+        name: turn_id
+        required: true
+        type: string
+      - description: Тип хода
+        in: body
+        name: turn_type
+        required: true
+        schema:
+          $ref: '#/definitions/app.SwaggerUpdateTurnRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.UpdateTurnResponse'
+      summary: Указать тип хода
+      tags:
+      - Ходы
+  /api/turns/{turn_id}/delete_card/{card_id}:
+    delete:
+      description: Удалить карту из хода
+      parameters:
+      - description: id хода
+        in: path
+        name: turn_id
+        required: true
+        type: string
+      - description: id карту
+        in: path
+        name: card_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AllCardsResponse'
+      summary: Удалить карту из хода
+      tags:
+      - Ходы
+  /api/turns/{turn_id}/moderator_confirm:
+    put:
+      description: Подтвердить или отменить ход модератором
+      parameters:
+      - description: id хода
+        in: path
+        name: turn_id
+        required: true
+        type: string
+      - description: подтвердить
+        in: body
+        name: confirm
+        required: true
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: OK
+      summary: Подтвердить ход
+      tags:
+      - Ходы
+  /api/turns/user_confirm:
+    put:
+      description: Сформировать или удалить ход пользователем
+      responses:
+        "200":
+          description: OK
+      summary: Сформировать ход
+      tags:
+      - Ходы
+  /api/cards:
+    get:
+      description: Возвращает все доуступные карты с опциональной фильтрацией
+        по имя
+      parameters:
+      - description: Имя для фильтрации
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.GetAllCardsResponse'
+      summary: Получить всех карты
+      tags:
+      - Карты
+  /api/cards/:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Добавить новую карту
+      parameters:
+      - description: Изображение карты
+        in: formData
+        name: image
+        type: file
+      - description: Имя
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Тип
+        in: formData
+        name: type
+        required: true
+        type: string
+      - description: НужноЕды
+        in: formData
+        name: needfood
+        required: true
+        type: integer
+      - description: Описание
+        in: formData
+        name: description
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Добавить карту
+      tags:
+      - Карты
+  /api/cards/{card_id}:
+    delete:
+      description: Удаляет карту по id
+      parameters:
+      - description: id карту
+        in: path
+        name: card_id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Удалить карту
+      tags:
+      - Карты
+    get:
+      description: Возвращает более подробную информацию об одном карте
+      parameters:
+      - description: id карту
+        in: path
+        name: card_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ds.Card'
+      summary: Получить одного карту
+      tags:
+      - Карты
+    put:
+      consumes:
+      - multipart/form-data
+      description: Изменить данные полей о карте
+      parameters:
+      - description: Идентификатор карту
+        in: path
+        name: card_id
+        required: true
+        type: string
+      - description: Имя
+        in: formData
+        name: name
+        type: string
+      - description: Тип
+        in: formData
+        name: type
+        type: string
+      - description: НужноЕды
+        in: formData
+        name: needfood
+        type: integer
+      - description: Изображение карту
+        in: formData
+        name: image
+        type: file
+      - description: Описание
+        in: formData
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Изменить карту
+      tags:
+      - Карты
+  /api/cards/{card_id}/add_to_turn:
+    post:
+      description: Добавить выбранного карту в черновик хода
+      parameters:
+      - description: id карту
+        in: path
+        name: card_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AddToTurnResp'
+      summary: Добавить в ход
+      tags:
+      - Карты
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Авторизует пользователя по логиню, паролю и отдаёт jwt токен для
+        дальнейших запросов
+      parameters:
+      - description: login and password
+        in: body
+        name: user_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.SwaggerLoginResp'
+      summary: Авторизация
+      tags:
+      - Авторизация
+  /api/user/loguot:
+    post:
+      consumes:
+      - application/json
+      description: Выход из аккаунта
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Выйти из аккаунта
+      tags:
+      - Авторизация
+  /api/user/sign_up:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя
+      parameters:
+      - description: login and password
+        in: body
+        name: user_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/schemes.RegisterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.RegisterResp'
+      summary: Регистрация
+      tags:
+      - Авторизация
+schemes:
+- http
+swagger: "2.0"

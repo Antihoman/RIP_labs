@@ -1,0 +1,729 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "title": "Electronic turns",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "127.0.0.1:80",
+    "basePath": "/",
+    "paths": {
+        "/api/turns": {
+            "get": {
+                "description": "Возвращает все ходы с фильтрацией по статусу и дате формирования",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ходы"
+                ],
+                "summary": "Получить все ходы",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "статус хода",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "начальная дата формирования",
+                        "name": "formation_date_start",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "конечная дата формирвания",
+                        "name": "formation_date_end",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AllTurnsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/turns/user_confirm": {
+            "put": {
+                "description": "Сформировать или удалить ход пользователем",
+                "tags": [
+                    "Ходы"
+                ],
+                "summary": "Сформировать ход",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/turns/{turn_id}": {
+            "get": {
+                "description": "Возвращает подробную информацию о ходе и его типе",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ходы"
+                ],
+                "summary": "Получить одно ход",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id ходы",
+                        "name": "turn_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.TurnResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Позволяет изменить тип ходы и возвращает обновлённые данные",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ходы"
+                ],
+                "summary": "Указать тип хода",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id хода",
+                        "name": "turn_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Тип хода",
+                        "name": "turn_type",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/app.SwaggerUpdateTurnRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.UpdateTurnResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет ход по id",
+                "tags": [
+                    "Ходы"
+                ],
+                "summary": "Удалить ход",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id хода",
+                        "name": "turn_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/turns/{turn_id}/delete_card/{card_id}": {
+            "delete": {
+                "description": "Удалить карту из хода",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Ходы"
+                ],
+                "summary": "Удалить карту из хода",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id хода",
+                        "name": "turn_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "id карту",
+                        "name": "card_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AllCardsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/turns/{turn_id}/moderator_confirm": {
+            "put": {
+                "description": "Подтвердить или отменить ход модератором",
+                "tags": [
+                    "Ходы"
+                ],
+                "summary": "Подтвердить ход",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id хода",
+                        "name": "turn_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "подтвердить",
+                        "name": "confirm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/cards": {
+            "get": {
+                "description": "Возвращает всех доуступных картей с опциональной фильтрацией по ФИО",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Карты"
+                ],
+                "summary": "Получить всех картей",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ФИО для фильтрации",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.GetAllCardsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/cards/": {
+            "post": {
+                "description": "Добавить новую карту",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "Карты"
+                ],
+                "summary": "Добавить карту",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Изображение карты",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Имя",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип",
+                        "name": "type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ТребуемаяЕда",
+                        "name": "needFood",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Описание",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/cards/{card_id}": {
+            "get": {
+                "description": "Возвращает более подробную информацию об одной карте",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Карты"
+                ],
+                "summary": "Получить одну карту",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id карты",
+                        "name": "card_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ds.Card"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Изменить данные полей о карте",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Карты"
+                ],
+                "summary": "Изменить карту",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Идентификатор карты",
+                        "name": "card_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Изображение карты",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Имя",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип",
+                        "name": "type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ТребуемаяЕда",
+                        "name": "needFood",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Описание",
+                        "name": "description",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Удаляет карту по id",
+                "tags": [
+                    "Карты"
+                ],
+                "summary": "Удалить карту",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id карту",
+                        "name": "card_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/cards/{card_id}/add_to_turn": {
+            "post": {
+                "description": "Добавить выбраную карту в черновик хода",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Карты"
+                ],
+                "summary": "Добавить в ход",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id карты",
+                        "name": "card_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AddToTurnResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "post": {
+                "description": "Авторизует пользователя по логиню, паролю и отдаёт jwt токен для дальнейших запросов",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Авторизация",
+                "parameters": [
+                    {
+                        "description": "login and password",
+                        "name": "user_credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.LoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.SwaggerLoginResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/loguot": {
+            "post": {
+                "description": "Выход из аккаунта",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Выйти из аккаунта",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/user/sign_up": {
+            "post": {
+                "description": "Регистрация нового пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Регистрация",
+                "parameters": [
+                    {
+                        "description": "login and password",
+                        "name": "user_credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemes.RegisterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.RegisterResp"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "app.SwaggerUpdateTurnRequest": {
+            "type": "object",
+            "properties": {
+                "turn_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "ds.Card": {
+            "type": "object",
+            "required": [
+                "description",
+                "needFood",
+                "type",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "needFood": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.AddToTurnResp": {
+            "type": "object",
+            "properties": {
+                "card_count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "schemes.AllTurnsResponse": {
+            "type": "object",
+            "properties": {
+                "turns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemes.TurnOutput"
+                    }
+                }
+            }
+        },
+        "schemes.AllCardsResponse": {
+            "type": "object",
+            "properties": {
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ds.Card"
+                    }
+                }
+            }
+        },
+        "schemes.GetAllCardsResponse": {
+            "type": "object",
+            "properties": {
+                "draft_turn": {
+                    "$ref": "#/definitions/schemes.TurnShort"
+                },
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ds.Card"
+                    }
+                }
+            }
+        },
+        "schemes.LoginReq": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 30
+                }
+            }
+        },
+        "schemes.TurnOutput": {
+            "type": "object",
+            "properties": {
+                "completion_date": {
+                    "type": "string"
+                },
+                "creation_date": {
+                    "type": "string"
+                },
+                "customer": {
+                    "type": "string"
+                },
+                "formation_date": {
+                    "type": "string"
+                },
+                "moderator": {
+                    "type": "string"
+                },
+                "turn_phase": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.TurnResponse": {
+            "type": "object",
+            "properties": {
+                "turn": {
+                    "$ref": "#/definitions/schemes.TurnOutput"
+                },
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ds.Card"
+                    }
+                }
+            }
+        },
+        "schemes.TurnShort": {
+            "type": "object",
+            "properties": {
+                "card_count": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.RegisterReq": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "maxLength": 30
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 30
+                }
+            }
+        },
+        "schemes.RegisterResp": {
+            "type": "object",
+            "properties": {
+                "ok": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "schemes.SwaggerLoginResp": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
+                },
+                "token_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.UpdateTurnResponse": {
+            "type": "object",
+            "properties": {
+                "turns": {
+                    "$ref": "#/definitions/schemes.TurnOutput"
+                }
+            }
+        }
+    }
+}

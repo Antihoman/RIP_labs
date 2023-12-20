@@ -28,7 +28,7 @@ func (app *Application) GetAllCards(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	response := schemes.GetAllCardsResponse{DraftTurn: nil, Card: cards}
+	response := schemes.GetAllCardsResponse{DraftTurn: nil, Cards: cards}
 	if draftTurn != nil {
 		response.DraftTurn = &schemes.TurnShort{UUID: draftTurn.UUID}
 		containers, err := app.repo.GetTurnContent(draftTurn.UUID)
@@ -212,5 +212,5 @@ func (app *Application) AddToTurn(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, schemes.AllCardsResponse{Card: cards})
+	c.JSON(http.StatusOK, schemes.AllCardsResponse{Cards: cards})
 }

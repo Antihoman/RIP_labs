@@ -2,7 +2,7 @@ package app
 
 import (
 	"log"
-	"net/http"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,13 +11,21 @@ import (
 
 	"lab1/internal/app/config"
 	"lab1/internal/app/dsn"
+	"lab1/internal/app/redis"
 	"lab1/internal/app/repository"
+	"lab1/internal/app/role"
+
+	_ "lab1/docs"
+	"github.com/swaggo/files"       // swagger embed files
+	"github.com/swaggo/gin-swagger" // gin-swagger middleware
+	_ "lab1/docs"
 )
 
 type Application struct {
 	repo        *repository.Repository
 	minioClient *minio.Client
 	config      *config.Config
+	redisClient *redis.Client
 }
 
 func (app *Application) Run() {
@@ -27,25 +35,46 @@ func (app *Application) Run() {
 
 	r.Use(ErrorHandler())
 
-	r.GET("/api/cards", app.GetAllCards)
-	r.GET("/api/cards/:card_id", app.GetCard)
-	r.DELETE("/api/cards/:card_id", app.DeleteCard)
-	r.PUT("/api/cards/:card_id", app.ChangeCard)
-	r.POST("/api/cards", app.AddCard)
-	r.POST("/api/cards/:card_id/add_to_turn", app.AddToTurn)
+	// Услуги - получатели
+	api := r.Group("/api")
+	{
+		res := api.Group("/cards")
+		{
+			res.GET("/", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllCards)                     // Список с поиском
+			res.GET("/:id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetCard)            // Одна услуга
+			res.DELETE("/:id", app.WithAuthCheck(role.Moderator), app.DeleteCard)                         				// Удаление
+			res.PUT("/:id", app.WithAuthCheck(role.Moderator), app.ChangeCard)                            				// Изменение
+			res.POST("", app.WithAuthCheck(role.Moderator), app.AddCard)                                           				// Добавление
+			res.POST("/:id/add_to_turn", app.WithAuthCheck(role.Customer,role.Moderator), app.AddToTurn) 		// Добавление в заявку
+		}
 
-	r.GET("/api/turns", app.GetAllTurns)
-	r.GET("/api/turns/:turn_id", app.GetTurn)
-	r.PUT("/api/turns/:turn_id/update", app.UpdateTurn)
-	r.DELETE("/api/turns/:turn_id", app.DeleteTurn)
-	r.DELETE("/api/turns/:turn_id/delete_card/:card_id", app.DeleteFromTurn)
-	r.PUT("/api/turns/:turn_id/user_confirm", app.UserConfirm)
-	r.PUT("/api/turns/:turn_id/moderator_confirm", app.ModeratorConfirm)
+		// Заявки - уведомления
+		n := api.Group("/turns")
+		{
+			n.GET("/", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllTurns)                                         				  // Список (отфильтровать по дате формирования и статусу)
+			n.GET("/:id",app.WithAuthCheck(role.Customer, role.Moderator),  app.GetTurn)                             				  // Одна заявка
+			n.PUT("", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateTurn)                                	  // Изменение (добавление транспорта)
+			n.DELETE("", app.WithAuthCheck(role.Customer,role.Moderator), app.DeleteTurn)                                      				  // Удаление
+			n.DELETE("/delete_recipient/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromTurn) 	  // Изменеие (удаление услуг)
+			n.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                                    				  // Сформировать создателем
+			n.PUT("/:id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)                         				  // Завершить отклонить модератором
+			n.PUT("/:id/sending", app.Sending)
+		}
 
-	r.Static("/image", "./resources/images")
-	r.Static("/css", "./resources/css")
-	r.Run("localhost:8080")
-	log.Println("Server down")
+		// Пользователи (авторизация)
+		u := api.Group("/user")
+		{
+			u.POST("/sign_up", app.Register)
+			u.POST("/login", app.Login)
+			u.POST("/logout", app.Logout)
+		}
+
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+		r.Run(fmt.Sprintf("%s:%d", app.config.ServiceHost, app.config.ServicePort))
+
+		log.Println("Server down")
+	}
 }
 
 func New() (*Application, error) {
@@ -63,7 +92,7 @@ func New() (*Application, error) {
 		return nil, err
 	}
 
-	app.minioClient, err = minio.New(app.config.MinioEndpoint, &minio.Options{
+	app.minioClient, err = minio.New(app.config.Minio.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4("", "", ""),
 		Secure: false,
 	})
@@ -71,28 +100,10 @@ func New() (*Application, error) {
 		return nil, err
 	}
 
-	return &app, nil
-}
-
-func ErrorHandler() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Next()
-
-		for _, err := range c.Errors {
-			log.Println(err.Err)
-		}
-		lastError := c.Errors.Last()
-		if lastError != nil {
-			switch c.Writer.Status() {
-			case http.StatusBadRequest:
-				c.JSON(-1, gin.H{"error": "wrong request"})
-			case http.StatusNotFound:
-				c.JSON(-1, gin.H{"error": lastError.Error()})
-			case http.StatusMethodNotAllowed:
-				c.JSON(-1, gin.H{"error": lastError.Error()})
-			default:
-				c.Status(-1)
-			}
-		}
+	app.redisClient, err = redis.New(app.config.Redis)
+	if err != nil {
+		return nil, err
 	}
+
+	return &app, nil
 }
