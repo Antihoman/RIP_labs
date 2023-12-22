@@ -8,34 +8,30 @@ definitions:
   ds.Card:
     properties:
       description:
+        maxLength: 200
+        type: string
+      image_url:
+        type: string
+      name:
+        maxLength: 50
         type: string
       needfood:
         type: integer
       type:
-        type: string
-      name:
-        type: string
-      image_url:
+        maxLength: 50
         type: string
       uuid:
         type: string
     required:
     - description
+    - name
     - needfood
     - type
-    - name
     type: object
   schemes.AddToTurnResp:
     properties:
       card_count:
         type: integer
-    type: object
-  schemes.AllTurnsResponse:
-    properties:
-      turns:
-        items:
-          $ref: '#/definitions/schemes.TurnOutput'
-        type: array
     type: object
   schemes.AllCardsResponse:
     properties:
@@ -44,14 +40,21 @@ definitions:
           $ref: '#/definitions/ds.Card'
         type: array
     type: object
+  schemes.AllTurnsResponse:
+    properties:
+      turns:
+        items:
+          $ref: '#/definitions/schemes.TurnOutput'
+        type: array
+    type: object
   schemes.GetAllCardsResponse:
     properties:
-      draft_turn:
-        $ref: '#/definitions/schemes.TurnShort'
       cards:
         items:
           $ref: '#/definitions/ds.Card'
         type: array
+      draft_turn:
+        $ref: '#/definitions/schemes.TurnShort'
     type: object
   schemes.LoginReq:
     properties:
@@ -64,41 +67,6 @@ definitions:
     required:
     - login
     - password
-    type: object
-  schemes.TurnOutput:
-    properties:
-      completion_date:
-        type: string
-      creation_date:
-        type: string
-      customer:
-        type: string
-      formation_date:
-        type: string
-      moderator:
-        type: string
-      turn_phase:
-        type: string
-      status:
-        type: string
-      uuid:
-        type: string
-    type: object
-  schemes.TurnResponse:
-    properties:
-      turn:
-        $ref: '#/definitions/schemes.TurnOutput'
-      cards:
-        items:
-          $ref: '#/definitions/ds.Card'
-        type: array
-    type: object
-  schemes.TurnShort:
-    properties:
-      card_count:
-        type: integer
-      uuid:
-        type: string
     type: object
   schemes.RegisterReq:
     properties:
@@ -126,22 +94,206 @@ definitions:
       token_type:
         type: string
     type: object
-  schemes.UpdateTurnResponse:
+  schemes.TurnOutput:
     properties:
-      turns:
+      completion_date:
+        type: string
+      creation_date:
+        type: string
+      customer:
+        type: string
+      formation_date:
+        type: string
+      moderator:
+        type: string
+      sending_status:
+        type: string
+      status:
+        type: string
+      takefood:
+        type: integer
+      turn_type:
+        type: string
+      uuid:
+        type: string
+    type: object
+  schemes.TurnResponse:
+    properties:
+      cards:
+        items:
+          $ref: '#/definitions/ds.Card'
+        type: array
+      turn:
         $ref: '#/definitions/schemes.TurnOutput'
     type: object
-host: 127.0.0.1:80
+  schemes.TurnShort:
+    properties:
+      card_count:
+        type: integer
+      uuid:
+        type: string
+    type: object
+host: 127.0.0.1:8080
 info:
   contact: {}
-  title: Electronic turns
+  title: Electronic notifications
   version: "1.0"
 paths:
-  /api/turns:
+  /api/cards:
     get:
-      description: Возвращает все ходы с фильтрацией по статусу и дате формирования
+      description: Возвращает всех доуступных получателей с опциональной фильтрацией
+        по ФИО
       parameters:
-      - description: статус хода
+      - description: ФИО для фильтрации
+        in: query
+        name: fio
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.GetAllCardsResponse'
+      summary: Получить всех получателей
+      tags:
+      - Получатели
+    post:
+      consumes:
+      - multipart/form-data
+      description: Добавить нового получателя
+      parameters:
+      - description: Изображение получателя
+        in: formData
+        name: image
+        type: file
+      - description: ФИО
+        in: formData
+        name: fio
+        required: true
+        type: string
+      - description: Почта
+        in: formData
+        name: email
+        required: true
+        type: string
+      - description: Возраст
+        in: formData
+        name: age
+        required: true
+        type: integer
+      - description: Адрес
+        in: formData
+        name: adress
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Добавить получателя
+      tags:
+      - Получатели
+  /api/cards/{id}:
+    delete:
+      description: Удаляет получателя по id
+      parameters:
+      - description: id получателя
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+      summary: Удалить получателя
+      tags:
+      - Получатели
+    get:
+      description: Возвращает более подробную информацию об одном получателе
+      parameters:
+      - description: id получателя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ds.Card'
+      summary: Получить одного получателя
+      tags:
+      - Получатели
+    put:
+      consumes:
+      - multipart/form-data
+      description: Изменить данные полей о получателе
+      parameters:
+      - description: Идентификатор получателя
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: ФИО
+        in: formData
+        name: fio
+        type: string
+      - description: Почта
+        in: formData
+        name: email
+        type: string
+      - description: Возраст
+        in: formData
+        name: age
+        type: integer
+      - description: Изображение получателя
+        in: formData
+        name: image
+        type: file
+      - description: Адрес
+        in: formData
+        name: adress
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Изменить получателя
+      tags:
+      - Получатели
+  /api/cards/{id}/add_to_turn:
+    post:
+      description: Добавить выбранного получателя в черновик уведомления
+      parameters:
+      - description: id получателя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AddToTurnResp'
+      summary: Добавить в уведомление
+      tags:
+      - Получатели
+  /api/turns:
+    delete:
+      description: Удаляет черновое уведомление
+      responses:
+        "200":
+          description: OK
+      summary: Удалить черновое уведомление
+      tags:
+      - Уведомления
+    get:
+      description: Возвращает все уведомления с фильтрацией по статусу и дате формирования
+      parameters:
+      - description: статус уведомления
         in: query
         name: status
         type: string
@@ -160,51 +312,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.AllTurnsResponse'
-      summary: Получить все хода
+      summary: Получить все уведомления
       tags:
-      - Ходы
-  /api/turns/{turn_id}:
-    delete:
-      description: Удаляет ход по id
-      parameters:
-      - description: id хода
-        in: path
-        name: turn_id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Удалить ход
-      tags:
-      - Ходы
-    get:
-      description: Возвращает подробную информацию об ходе и его типе
-      parameters:
-      - description: id хода
-        in: path
-        name: turn_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemes.TurnResponse'
-      summary: Получить одно ход
-      tags:
-      - Ходы
+      - Уведомления
     put:
-      description: Позволяет изменить тип хода и возвращает обновлённые данные
+      description: Позволяет изменить тип чернового уведомления и возвращает обновлённые
+        данные
       parameters:
-      - description: id хода
-        in: path
-        name: turn_id
-        required: true
-        type: string
-      - description: Тип хода
+      - description: Тип уведомления
         in: body
         name: turn_type
         required: true
@@ -216,22 +331,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemes.UpdateTurnResponse'
-      summary: Указать тип хода
+            $ref: '#/definitions/schemes.TurnOutput'
+      summary: Указать тип уведомления
       tags:
-      - Ходы
-  /api/turns/{turn_id}/delete_card/{card_id}:
-    delete:
-      description: Удалить карту из хода
+      - Уведомления
+  /api/turns/{id}:
+    get:
+      description: Возвращает подробную информацию об уведомлении и его типе
       parameters:
-      - description: id хода
+      - description: id уведомления
         in: path
-        name: turn_id
-        required: true
-        type: string
-      - description: id карту
-        in: path
-        name: card_id
+        name: id
         required: true
         type: string
       produces:
@@ -240,17 +350,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemes.AllCardsResponse'
-      summary: Удалить карту из хода
+            $ref: '#/definitions/schemes.TurnResponse'
+      summary: Получить одно уведомление
       tags:
-      - Ходы
-  /api/turns/{turn_id}/moderator_confirm:
+      - Уведомления
+  /api/turns/{id}/moderator_confirm:
     put:
-      description: Подтвердить или отменить ход модератором
+      description: Подтвердить или отменить уведомление модератором
       parameters:
-      - description: id хода
+      - description: id уведомления
         in: path
-        name: turn_id
+        name: id
         required: true
         type: string
       - description: подтвердить
@@ -262,161 +372,41 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Подтвердить ход
+          schema:
+            $ref: '#/definitions/schemes.TurnOutput'
+      summary: Подтвердить уведомление
       tags:
-      - Ходы
+      - Уведомления
+  /api/turns/delete_recipient/{id}:
+    delete:
+      description: Удалить получателя из черновово уведомления
+      parameters:
+      - description: id получателя
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemes.AllCardsResponse'
+      summary: Удалить получателя из черновово уведомления
+      tags:
+      - Уведомления
   /api/turns/user_confirm:
     put:
-      description: Сформировать или удалить ход пользователем
-      responses:
-        "200":
-          description: OK
-      summary: Сформировать ход
-      tags:
-      - Ходы
-  /api/cards:
-    get:
-      description: Возвращает все доуступные карты с опциональной фильтрацией
-        по имя
-      parameters:
-      - description: Имя для фильтрации
-        in: query
-        name: name
-        type: string
-      produces:
-      - application/json
+      description: Сформировать уведомление пользователем
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schemes.GetAllCardsResponse'
-      summary: Получить всех карты
+            $ref: '#/definitions/schemes.TurnOutput'
+      summary: Сформировать уведомление
       tags:
-      - Карты
-  /api/cards/:
-    post:
-      consumes:
-      - multipart/form-data
-      description: Добавить новую карту
-      parameters:
-      - description: Изображение карты
-        in: formData
-        name: image
-        type: file
-      - description: Имя
-        in: formData
-        name: name
-        required: true
-        type: string
-      - description: Тип
-        in: formData
-        name: type
-        required: true
-        type: string
-      - description: НужноЕды
-        in: formData
-        name: needfood
-        required: true
-        type: integer
-      - description: Описание
-        in: formData
-        name: description
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Добавить карту
-      tags:
-      - Карты
-  /api/cards/{card_id}:
-    delete:
-      description: Удаляет карту по id
-      parameters:
-      - description: id карту
-        in: path
-        name: card_id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-      summary: Удалить карту
-      tags:
-      - Карты
-    get:
-      description: Возвращает более подробную информацию об одном карте
-      parameters:
-      - description: id карту
-        in: path
-        name: card_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/ds.Card'
-      summary: Получить одного карту
-      tags:
-      - Карты
-    put:
-      consumes:
-      - multipart/form-data
-      description: Изменить данные полей о карте
-      parameters:
-      - description: Идентификатор карту
-        in: path
-        name: card_id
-        required: true
-        type: string
-      - description: Имя
-        in: formData
-        name: name
-        type: string
-      - description: Тип
-        in: formData
-        name: type
-        type: string
-      - description: НужноЕды
-        in: formData
-        name: needfood
-        type: integer
-      - description: Изображение карту
-        in: formData
-        name: image
-        type: file
-      - description: Описание
-        in: formData
-        name: description
-        type: string
-      produces:
-      - application/json
-      responses: {}
-      summary: Изменить карту
-      tags:
-      - Карты
-  /api/cards/{card_id}/add_to_turn:
-    post:
-      description: Добавить выбранного карту в черновик хода
-      parameters:
-      - description: id карту
-        in: path
-        name: card_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/schemes.AddToTurnResp'
-      summary: Добавить в ход
-      tags:
-      - Карты
+      - Уведомления
   /api/user/login:
     post:
       consumes:

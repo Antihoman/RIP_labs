@@ -12,11 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary		Получить все уведомления
-// @Tags		Уведомления
-// @Description	Возвращает все уведомления с фильтрацией по статусу и дате формирования
+// @Summary		Получить все ходы
+// @Tags		Ходы
+// @Description	Возвращает все ходы с фильтрацией по статусу и дате формирования
 // @Produce		json
-// @Param		status query string false "статус уведомления"
+// @Param		status query string false "статус ходы"
 // @Param		formation_date_start query string false "начальная дата формирования"
 // @Param		formation_date_end query string false "конечная дата формирвания"
 // @Success		200 {object} schemes.AllTurnsResponse
@@ -50,11 +50,11 @@ func (app *Application) GetAllTurns(c *gin.Context) {
 	c.JSON(http.StatusOK, schemes.AllTurnsResponse{Turns: outputTurns})
 }
 
-// @Summary		Получить одно уведомление
-// @Tags		Уведомления
-// @Description	Возвращает подробную информацию об уведомлении и его типе
+// @Summary		Получить одно карту
+// @Tags		Ходы
+// @Description	Возвращает подробную информацию об ходы и его типе
 // @Produce		json
-// @Param		id path string true "id уведомления"
+// @Param		id path string true "id ходы"
 // @Success		200 {object} schemes.TurnResponse
 // @Router		/api/turns/{id} [get]
 func (app *Application) GetTurn(c *gin.Context) {
@@ -78,7 +78,7 @@ func (app *Application) GetTurn(c *gin.Context) {
 		return
 	}
 	if turn == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("уведомление не найдено"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
 
@@ -94,12 +94,12 @@ type SwaggerUpdateTurnRequest struct {
 	TurnPhase string `json:"turn_type"`
 }
 
-// @Summary		Указать тип уведомления
-// @Tags		Уведомления
-// @Description	Позволяет изменить тип чернового уведомления и возвращает обновлённые данные
+// @Summary		Указать тип ходы
+// @Tags		Ходы
+// @Description	Позволяет изменить тип чернового ходы и возвращает обновлённые данные
 // @Access		json
 // @Produce		json
-// @Param		turn_type body SwaggerUpdateTurnRequest true "Тип уведомления"
+// @Param		turn_type body SwaggerUpdateTurnRequest true "Тип ходы"
 // @Success		200 {object} schemes.TurnOutput
 // @Router		/api/turns [put]
 func (app *Application) UpdateTurn(c *gin.Context) {
@@ -119,7 +119,7 @@ func (app *Application) UpdateTurn(c *gin.Context) {
 		return
 	}
 	if turn == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("уведомление не найдено"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
 
@@ -133,9 +133,9 @@ func (app *Application) UpdateTurn(c *gin.Context) {
 	c.JSON(http.StatusOK, schemes.ConvertTurn(turn))
 }
 
-// @Summary		Удалить черновое уведомление
-// @Tags		Уведомления
-// @Description	Удаляет черновое уведомление
+// @Summary		Удалить черновое карту
+// @Tags		Ходы
+// @Description	Удаляет черновое карту
 // @Success		200
 // @Router		/api/turns [delete]
 func (app *Application) DeleteTurn(c *gin.Context) {
@@ -161,12 +161,12 @@ func (app *Application) DeleteTurn(c *gin.Context) {
 	}
 	c.Status(http.StatusOK)
 }
-// @Summary		Удалить получателя из черновово уведомления
-// @Tags		Уведомления
-// @Description	Удалить получателя из черновово уведомления
+// @Summary		Удалить получателя из черновово ходы
+// @Tags		Ходы
+// @Description	Удалить получателя из черновово ходы
 // @Produce		json
 // @Param		id path string true "id получателя"
-// @Success		200 {object} schemes.AllRecipientsResponse
+// @Success		200 {object} schemes.AllCardsResponse
 // @Router		/api/turns/delete_recipient/{id} [delete]
 func (app *Application) DeleteFromTurn(c *gin.Context) {
 	var request schemes.DeleteFromTurnRequest
@@ -183,7 +183,7 @@ func (app *Application) DeleteFromTurn(c *gin.Context) {
 		return
 	}
 	if turn == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("уведомление не найдено"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
 
@@ -201,9 +201,9 @@ func (app *Application) DeleteFromTurn(c *gin.Context) {
 	c.JSON(http.StatusOK, schemes.AllCardsResponse{Cards: cards})
 }
 
-// @Summary		Сформировать уведомление
-// @Tags		Уведомления
-// @Description	Сформировать уведомление пользователем
+// @Summary		Сформировать ход
+// @Tags		Ходы
+// @Description	Сформировать карту пользователем
 // @Success		200 {object} schemes.TurnOutput
 // @Router		/api/turns/user_confirm [put]
 func (app *Application) UserConfirm(c *gin.Context) {
@@ -214,14 +214,14 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		return
 	}
 	if turn == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("уведомление не найдено"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
 	
-	if err := sendingRequest(turn.UUID); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf(`sending service is unavailable: {%s}`, err))
-		return
-	}
+	// if err := sendingRequest(turn.UUID); err != nil {
+	// 	c.AbortWithError(http.StatusInternalServerError, fmt.Errorf(`sending service is unavailable: {%s}`, err))
+	// 	return
+	// }
 
 	sendingStatus := ds.SendingStarted
 	turn.SendingStatus = &sendingStatus
@@ -235,10 +235,10 @@ func (app *Application) UserConfirm(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, schemes.ConvertTurn(turn))
 }
-// @Summary		Подтвердить уведомление
-// @Tags		Уведомления
-// @Description	Подтвердить или отменить уведомление модератором
-// @Param		id path string true "id уведомления"
+// @Summary		Подтвердить карту
+// @Tags		Ходы
+// @Description	Подтвердить или отменить карту модератором
+// @Param		id path string true "id ходы"
 // @Param		confirm body boolean true "подтвердить"
 // @Success		200 {object} schemes.TurnOutput
 // @Router		/api/turns/{id}/moderator_confirm [put]
@@ -260,7 +260,7 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		return
 	}
 	if turn == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("уведомление не найдено"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
 	if turn.Status != ds.StatusFormed  {
@@ -314,7 +314,7 @@ func (app *Application) Sending(c *gin.Context) {
 		return
 	}
 	if turn == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("уведомление не найдено"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
 	// if turn.Status != ds.StatusFormed || *turn.SendingStatus != ds.SendingStarted {

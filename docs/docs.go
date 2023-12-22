@@ -15,20 +15,231 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/turns": {
+        "/api/cards": {
             "get": {
-                "description": "Возвращает все ходы с фильтрацией по статусу и дате формирования",
+                "description": "Возвращает всех доуступных получателей с опциональной фильтрацией по ФИО",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ходы"
+                    "Получатели"
                 ],
-                "summary": "Получить все ходы",
+                "summary": "Получить всех получателей",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "статус ходы",
+                        "description": "ФИО для фильтрации",
+                        "name": "fio",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.GetAllCardsResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Добавить нового получателя",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "Получатели"
+                ],
+                "summary": "Добавить получателя",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Изображение получателя",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ФИО",
+                        "name": "fio",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Почта",
+                        "name": "email",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Возраст",
+                        "name": "age",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Адрес",
+                        "name": "adress",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/cards/{id}": {
+            "get": {
+                "description": "Возвращает более подробную информацию об одном получателе",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Получатели"
+                ],
+                "summary": "Получить одного получателя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id получателя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ds.Card"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Изменить данные полей о получателе",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Получатели"
+                ],
+                "summary": "Изменить получателя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Идентификатор получателя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ФИО",
+                        "name": "fio",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Почта",
+                        "name": "email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Возраст",
+                        "name": "age",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Изображение получателя",
+                        "name": "image",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Адрес",
+                        "name": "adress",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Удаляет получателя по id",
+                "tags": [
+                    "Получатели"
+                ],
+                "summary": "Удалить получателя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id получателя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/cards/{id}/add_to_turn": {
+            "post": {
+                "description": "Добавить выбранного получателя в черновик уведомления",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Получатели"
+                ],
+                "summary": "Добавить в уведомление",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id получателя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.AddToTurnResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/turns": {
+            "get": {
+                "description": "Возвращает все уведомления с фильтрацией по статусу и дате формирования",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Уведомления"
+                ],
+                "summary": "Получить все уведомления",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "статус уведомления",
                         "name": "status",
                         "in": "query"
                     },
@@ -53,69 +264,19 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/turns/user_confirm": {
-            "put": {
-                "description": "Сформировать или удалить ход пользователем",
-                "tags": [
-                    "ходы"
-                ],
-                "summary": "Сформировать ход",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/turns/{turn_id}": {
-            "get": {
-                "description": "Возвращает подробную информацию о ходе и его типе",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "ходы"
-                ],
-                "summary": "Получить один ход",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id хода",
-                        "name": "turn_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemes.turnResponse"
-                        }
-                    }
-                }
             },
             "put": {
-                "description": "Позволяет изменить тип хода и возвращает обновлённые данные",
+                "description": "Позволяет изменить тип чернового уведомления и возвращает обновлённые данные",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ходы"
+                    "Уведомления"
                 ],
-                "summary": "Указать тип хода",
+                "summary": "Указать тип уведомления",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "id хода",
-                        "name": "turn_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Тип хода",
+                        "description": "Тип уведомления",
                         "name": "turn_type",
                         "in": "body",
                         "required": true,
@@ -128,26 +289,17 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemes.UpdateTurnResponse"
+                            "$ref": "#/definitions/schemes.TurnOutput"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Удаляет ход по id",
+                "description": "Удаляет черновое уведомление",
                 "tags": [
-                    "ходы"
+                    "Уведомления"
                 ],
-                "summary": "Удалить ход",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id хода",
-                        "name": "turn_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
+                "summary": "Удалить черновое уведомление",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -155,28 +307,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/turns/{turn_id}/delete_card/{card_id}": {
+        "/api/turns/delete_recipient/{id}": {
             "delete": {
-                "description": "Удалить карту из хода",
+                "description": "Удалить получателя из черновово уведомления",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "ходы"
+                    "Уведомления"
                 ],
-                "summary": "Удалить карту из хода",
+                "summary": "Удалить получателя из черновово уведомления",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id хода",
-                        "name": "turn_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "id карты",
-                        "name": "card_id",
+                        "description": "id получателя",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -191,18 +336,64 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/turns/{turn_id}/moderator_confirm": {
+        "/api/turns/user_confirm": {
             "put": {
-                "description": "Подтвердить или отменить ход модератором",
+                "description": "Сформировать уведомление пользователем",
                 "tags": [
-                    "ходы"
+                    "Уведомления"
                 ],
-                "summary": "Подтвердить ход",
+                "summary": "Сформировать уведомление",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.TurnOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/turns/{id}": {
+            "get": {
+                "description": "Возвращает подробную информацию об уведомлении и его типе",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Уведомления"
+                ],
+                "summary": "Получить одно уведомление",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id хода",
-                        "name": "turn_id",
+                        "description": "id уведомления",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/schemes.TurnResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/turns/{id}/moderator_confirm": {
+            "put": {
+                "description": "Подтвердить или отменить уведомление модератором",
+                "tags": [
+                    "Уведомления"
+                ],
+                "summary": "Подтвердить уведомление",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id уведомления",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -218,219 +409,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/cards": {
-            "get": {
-                "description": "Возвращает всех доуступных ходов с опциональной фильтрацией по ФИО",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Карты"
-                ],
-                "summary": "Получить всех получателей",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ФИО для фильтрации",
-                        "name": "name",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schemes.GetAllCardsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/cards/": {
-            "post": {
-                "description": "Добавить новую карту",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "tags": [
-                    "Карты"
-                ],
-                "summary": "Добавить карту",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "Изображение карты",
-                        "name": "image",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Имя",
-                        "name": "name",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Тип",
-                        "name": "type",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "НужноЕды",
-                        "name": "needfood",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Описание",
-                        "name": "description",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/cards/{card_id}": {
-            "get": {
-                "description": "Возвращает более подробную информацию об одной карте",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Карты"
-                ],
-                "summary": "Получить одну карту",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id карты",
-                        "name": "card_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/ds.card"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Изменить данные полей о карте",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Карты"
-                ],
-                "summary": "Изменить карту",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Идентификатор карту",
-                        "name": "card_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Имя",
-                        "name": "name",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Тип",
-                        "name": "type",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "НужноЕды",
-                        "name": "needFood",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "file",
-                        "description": "Изображение карту",
-                        "name": "image",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Описание",
-                        "name": "description",
-                        "in": "formData"
-                    }
-                ],
-                "responses": {}
-            },
-            "delete": {
-                "description": "Удаляет карту по id",
-                "tags": [
-                    "Карты"
-                ],
-                "summary": "Удалить карту",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id карту",
-                        "name": "card_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    }
-                }
-            }
-        },
-        "/api/cards/{card_id}/add_to_turn": {
-            "post": {
-                "description": "Добавить выбраную карту в черновик хода",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Карты"
-                ],
-                "summary": "Добавить в ход",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id карту",
-                        "name": "card_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/schemes.AddToTurnResp"
+                            "$ref": "#/definitions/schemes.TurnOutput"
                         }
                     }
                 }
@@ -526,7 +507,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "app.SwaggerUpdateturnRequest": {
+        "app.SwaggerUpdateTurnRequest": {
             "type": "object",
             "properties": {
                 "turn_type": {
@@ -534,29 +515,32 @@ const docTemplate = `{
                 }
             }
         },
-        "ds.card": {
+        "ds.Card": {
             "type": "object",
             "required": [
-                "type",
-                "needFood",
                 "description",
-                "name"
+                "name",
+                "needfood",
+                "type"
             ],
             "properties": {
-                "type": {
-                    "type": "string"
-                },
-                "needFood": {
-                    "type": "integer"
-                },
                 "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 200
                 },
                 "image_url": {
                     "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 50
+                },
+                "needfood": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string",
+                    "maxLength": 50
                 },
                 "uuid": {
                     "type": "string"
@@ -571,24 +555,24 @@ const docTemplate = `{
                 }
             }
         },
-        "schemes.AllTurnsResponse": {
-            "type": "object",
-            "properties": {
-                "turns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schemes.turnOutput"
-                    }
-                }
-            }
-        },
         "schemes.AllCardsResponse": {
             "type": "object",
             "properties": {
                 "cards": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ds.card"
+                        "$ref": "#/definitions/ds.Card"
+                    }
+                }
+            }
+        },
+        "schemes.AllTurnsResponse": {
+            "type": "object",
+            "properties": {
+                "turns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/schemes.TurnOutput"
                     }
                 }
             }
@@ -596,14 +580,14 @@ const docTemplate = `{
         "schemes.GetAllCardsResponse": {
             "type": "object",
             "properties": {
-                "draft_turn": {
-                    "$ref": "#/definitions/schemes.turnshort"
-                },
                 "cards": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ds.card"
+                        "$ref": "#/definitions/ds.Card"
                     }
+                },
+                "draft_turn": {
+                    "$ref": "#/definitions/schemes.TurnShort"
                 }
             }
         },
@@ -621,60 +605,6 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "maxLength": 30
-                }
-            }
-        },
-        "schemes.turnOutput": {
-            "type": "object",
-            "properties": {
-                "completion_date": {
-                    "type": "string"
-                },
-                "creation_date": {
-                    "type": "string"
-                },
-                "customer": {
-                    "type": "string"
-                },
-                "formation_date": {
-                    "type": "string"
-                },
-                "moderator": {
-                    "type": "string"
-                },
-                "turn_phase": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "uuid": {
-                    "type": "string"
-                }
-            }
-        },
-        "schemes.turnResponse": {
-            "type": "object",
-            "properties": {
-                "turn": {
-                    "$ref": "#/definitions/schemes.turnOutput"
-                },
-                "cards": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ds.card"
-                    }
-                }
-            }
-        },
-        "schemes.turnshort": {
-            "type": "object",
-            "properties": {
-                "card_count": {
-                    "type": "integer"
-                },
-                "uuid": {
-                    "type": "string"
                 }
             }
         },
@@ -717,11 +647,63 @@ const docTemplate = `{
                 }
             }
         },
-        "schemes.UpdateturnResponse": {
+        "schemes.TurnOutput": {
             "type": "object",
             "properties": {
-                "turns": {
-                    "$ref": "#/definitions/schemes.turnOutput"
+                "completion_date": {
+                    "type": "string"
+                },
+                "creation_date": {
+                    "type": "string"
+                },
+                "customer": {
+                    "type": "string"
+                },
+                "formation_date": {
+                    "type": "string"
+                },
+                "moderator": {
+                    "type": "string"
+                },
+                "sending_status": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "takefood": {
+                    "type": "integer"
+                },
+                "turn_type": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemes.TurnResponse": {
+            "type": "object",
+            "properties": {
+                "cards": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ds.Card"
+                    }
+                },
+                "turn": {
+                    "$ref": "#/definitions/schemes.TurnOutput"
+                }
+            }
+        },
+        "schemes.TurnShort": {
+            "type": "object",
+            "properties": {
+                "card_count": {
+                    "type": "integer"
+                },
+                "uuid": {
+                    "type": "string"
                 }
             }
         }
@@ -731,10 +713,10 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "127.0.0.1:80",
+	Host:             "127.0.0.1:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
-	Title:            "Electronic turns",
+	Title:            "Electronic notifications",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
