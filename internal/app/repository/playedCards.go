@@ -17,6 +17,9 @@ func (r *Repository) GetAllTurns(customerId *string, formationDateStart, formati
 		Where("status != ?", ds.StatusDeleted).
 		Where("status != ?", ds.StatusDraft)
 
+	if customerId != nil {
+		query = query.Where("customer_id = ?", *customerId)
+	}
 	if formationDateStart != nil && formationDateEnd != nil {
 		query = query.Where("formation_date BETWEEN ? AND ?", *formationDateStart, *formationDateEnd)
 	} else if formationDateStart != nil {

@@ -228,18 +228,18 @@ const docTemplate = `{
         },
         "/api/turns": {
             "get": {
-                "description": "Возвращает все уведомления с фильтрацией по статусу и дате формирования",
+                "description": "Возвращает все ходы с фильтрацией по статусу и дате формирования",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Уведомления"
+                    "Ходы"
                 ],
-                "summary": "Получить все уведомления",
+                "summary": "Получить все ходы",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "статус уведомления",
+                        "description": "статус ходы",
                         "name": "status",
                         "in": "query"
                     },
@@ -266,17 +266,17 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Позволяет изменить тип чернового уведомления и возвращает обновлённые данные",
+                "description": "Позволяет изменить тип чернового ходы и возвращает обновлённые данные",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Уведомления"
+                    "Ходы"
                 ],
-                "summary": "Указать тип уведомления",
+                "summary": "Указать тип ходы",
                 "parameters": [
                     {
-                        "description": "Тип уведомления",
+                        "description": "Тип ходы",
                         "name": "turn_type",
                         "in": "body",
                         "required": true,
@@ -295,11 +295,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Удаляет черновое уведомление",
+                "description": "Удаляет черновое карту",
                 "tags": [
-                    "Уведомления"
+                    "Ходы"
                 ],
-                "summary": "Удалить черновое уведомление",
+                "summary": "Удалить черновое карту",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -309,14 +309,14 @@ const docTemplate = `{
         },
         "/api/turns/delete_recipient/{id}": {
             "delete": {
-                "description": "Удалить получателя из черновово уведомления",
+                "description": "Удалить получателя из черновово ходы",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Уведомления"
+                    "Ходы"
                 ],
-                "summary": "Удалить получателя из черновово уведомления",
+                "summary": "Удалить получателя из черновово ходы",
                 "parameters": [
                     {
                         "type": "string",
@@ -338,11 +338,11 @@ const docTemplate = `{
         },
         "/api/turns/user_confirm": {
             "put": {
-                "description": "Сформировать уведомление пользователем",
+                "description": "Сформировать карту пользователем",
                 "tags": [
-                    "Уведомления"
+                    "Ходы"
                 ],
-                "summary": "Сформировать уведомление",
+                "summary": "Сформировать ход",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -355,18 +355,18 @@ const docTemplate = `{
         },
         "/api/turns/{id}": {
             "get": {
-                "description": "Возвращает подробную информацию об уведомлении и его типе",
+                "description": "Возвращает подробную информацию об ходы и его типе",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Уведомления"
+                    "Ходы"
                 ],
-                "summary": "Получить одно уведомление",
+                "summary": "Получить одно карту",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id уведомления",
+                        "description": "id ходы",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -384,15 +384,15 @@ const docTemplate = `{
         },
         "/api/turns/{id}/moderator_confirm": {
             "put": {
-                "description": "Подтвердить или отменить уведомление модератором",
+                "description": "Подтвердить или отменить карту модератором",
                 "tags": [
-                    "Уведомления"
+                    "Ходы"
                 ],
-                "summary": "Подтвердить уведомление",
+                "summary": "Подтвердить карту",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id уведомления",
+                        "description": "id ходы",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -451,7 +451,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/loguot": {
+        "/api/user/logout": {
             "post": {
                 "description": "Выход из аккаунта",
                 "consumes": [

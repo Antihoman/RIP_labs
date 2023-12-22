@@ -117,7 +117,7 @@ func (app *Application) Login(c *gin.Context) {
 // @Accept		json
 // @Produce		json
 // @Success		200
-// @Router		/api/user/loguot [post]
+// @Router		/api/user/logout [post]
 func (app *Application) Logout(c *gin.Context) {
 	jwtStr := c.GetHeader("Authorization")
 	if !strings.HasPrefix(jwtStr, jwtPrefix) {

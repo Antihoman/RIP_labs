@@ -283,17 +283,17 @@ paths:
       - Получатели
   /api/turns:
     delete:
-      description: Удаляет черновое уведомление
+      description: Удаляет черновое карту
       responses:
         "200":
           description: OK
-      summary: Удалить черновое уведомление
+      summary: Удалить черновое карту
       tags:
-      - Уведомления
+      - Ходы
     get:
-      description: Возвращает все уведомления с фильтрацией по статусу и дате формирования
+      description: Возвращает все ходы с фильтрацией по статусу и дате формирования
       parameters:
-      - description: статус уведомления
+      - description: статус ходы
         in: query
         name: status
         type: string
@@ -312,14 +312,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.AllTurnsResponse'
-      summary: Получить все уведомления
+      summary: Получить все ходы
       tags:
-      - Уведомления
+      - Ходы
     put:
-      description: Позволяет изменить тип чернового уведомления и возвращает обновлённые
+      description: Позволяет изменить тип чернового ходы и возвращает обновлённые
         данные
       parameters:
-      - description: Тип уведомления
+      - description: Тип ходы
         in: body
         name: turn_type
         required: true
@@ -332,14 +332,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.TurnOutput'
-      summary: Указать тип уведомления
+      summary: Указать тип ходы
       tags:
-      - Уведомления
+      - Ходы
   /api/turns/{id}:
     get:
-      description: Возвращает подробную информацию об уведомлении и его типе
+      description: Возвращает подробную информацию об ходы и его типе
       parameters:
-      - description: id уведомления
+      - description: id ходы
         in: path
         name: id
         required: true
@@ -351,14 +351,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.TurnResponse'
-      summary: Получить одно уведомление
+      summary: Получить одно карту
       tags:
-      - Уведомления
+      - Ходы
   /api/turns/{id}/moderator_confirm:
     put:
-      description: Подтвердить или отменить уведомление модератором
+      description: Подтвердить или отменить карту модератором
       parameters:
-      - description: id уведомления
+      - description: id ходы
         in: path
         name: id
         required: true
@@ -374,12 +374,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.TurnOutput'
-      summary: Подтвердить уведомление
+      summary: Подтвердить карту
       tags:
-      - Уведомления
+      - Ходы
   /api/turns/delete_recipient/{id}:
     delete:
-      description: Удалить получателя из черновово уведомления
+      description: Удалить получателя из черновово ходы
       parameters:
       - description: id получателя
         in: path
@@ -393,20 +393,20 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.AllCardsResponse'
-      summary: Удалить получателя из черновово уведомления
+      summary: Удалить получателя из черновово ходы
       tags:
-      - Уведомления
+      - Ходы
   /api/turns/user_confirm:
     put:
-      description: Сформировать уведомление пользователем
+      description: Сформировать карту пользователем
       responses:
         "200":
           description: OK
           schema:
             $ref: '#/definitions/schemes.TurnOutput'
-      summary: Сформировать уведомление
+      summary: Сформировать ход
       tags:
-      - Уведомления
+      - Ходы
   /api/user/login:
     post:
       consumes:
@@ -430,7 +430,7 @@ paths:
       summary: Авторизация
       tags:
       - Авторизация
-  /api/user/loguot:
+  /api/user/logout:
     post:
       consumes:
       - application/json

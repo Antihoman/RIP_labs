@@ -40,8 +40,8 @@ type Turn struct {
 	CompletionDate *time.Time `gorm:"type:timestamp"`
 	ModeratorId    *string    `json:"-"`
 	CustomerId     string     `gorm:"not null"`
-	Phase          *string     `gorm:"size:50;"`
-	TakeFood       uint       `gorm:"-" json:"takefood" form:"takefood" binding:"required"`
+	Phase          *string    `gorm:"size:50;"`
+	TakeFood       uint       `gorm:"not null"`
 	SendingStatus  *string    `gorm:"size:40"`
 
 	Moderator *User
