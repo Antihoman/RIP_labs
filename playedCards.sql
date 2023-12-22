@@ -27,10 +27,10 @@ CREATE TABLE "public"."turns" (
 ) WITH (oids = false);
 
 INSERT INTO "turns" ("uuid", "status", "creation_date", "formation_date", "completion_date", "moderator_id", "customer_id", "phase", "sending_status", "take_food") VALUES
-('ed170485-5acf-4779-9e88-786664a6d23e',	'сформирован',	'2023-12-22 20:50:44.309105',	NULL,	NULL,	'e50e51a7-d4df-4136-89b2-79d43a577721',	'604bab40-0f84-43a1-87b4-169472eb5ce0',	NULL,	NULL, 1),
-('19199780-b53b-426e-85a2-281b2cb634a5',	'сформирован',	'2023-12-22 20:51:40.225756',	NULL,	NULL,	'e50e51a7-d4df-4136-89b2-79d43a577721',	'3fdb245e-d7ea-4ea0-915e-d3eafb8b6b7e',	NULL,	NULL, 2),
-('a3246620-e671-4602-871e-9ff0c84ec8be',	'сформирован',	'2023-12-22 20:52:34.068756',	NULL,	NULL,	'e50e51a7-d4df-4136-89b2-79d43a577721',	'3fdb245e-d7ea-4ea0-915e-d3eafb8b6b7e',	NULL,	NULL, 0),
-('7db3ffb5-1523-4813-b911-f19fec54e218',	'сформирован',	'2023-12-22 20:52:46.970346',	NULL,	NULL,	'e50e51a7-d4df-4136-89b2-79d43a577721',	'3fdb245e-d7ea-4ea0-915e-d3eafb8b6b7e',	NULL,	NULL, 1);
+('ed170485-5acf-4779-9e88-786664a6d23e',	'сформирован',	'2023-12-22 20:50:44.309105',	NULL,	NULL,	'c4c0ea17-934d-4882-8f6d-a57706088d8d',	'de327707-cc73-4a0d-adc7-2ae760b9e648',	NULL,	NULL, 1),
+('19199780-b53b-426e-85a2-281b2cb634a5',	'сформирован',	'2023-12-22 20:51:40.225756',	NULL,	NULL,	'c4c0ea17-934d-4882-8f6d-a57706088d8d',	'de327707-cc73-4a0d-adc7-2ae760b9e648',	NULL,	NULL, 2),
+('a3246620-e671-4602-871e-9ff0c84ec8be',	'сформирован',	'2023-12-22 20:52:34.068756',	NULL,	NULL,	'c4c0ea17-934d-4882-8f6d-a57706088d8d',	'702a4657-4ee6-49f2-8bc4-bcb2d61f3e5b',	NULL,	NULL, 0),
+('7db3ffb5-1523-4813-b911-f19fec54e218',	'сформирован',	'2023-12-22 20:52:46.970346',	NULL,	NULL,	'c4c0ea17-934d-4882-8f6d-a57706088d8d',	'702a4657-4ee6-49f2-8bc4-bcb2d61f3e5b',	NULL,	NULL, 1);
 
 DROP TABLE IF EXISTS "cards";
 CREATE TABLE "public"."cards" (
