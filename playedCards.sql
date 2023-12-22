@@ -53,15 +53,15 @@ DROP TABLE IF EXISTS "users";
 CREATE TABLE "public"."users" (
     "uuid" uuid DEFAULT gen_random_uuid() NOT NULL,
     "login" character varying(30) NOT NULL,
-    "password" character varying(30) NOT NULL,
+    "password" character varying(40) NOT NULL,
     "role" bigint,
     CONSTRAINT "users_pkey" PRIMARY KEY ("uuid")
 ) WITH (oids = false);
 
 INSERT INTO "users" ("uuid", "login", "password", "role") VALUES
-('604bab40-0f84-43a1-87b4-169472eb5ce0',	'antiho',	'Aa12345678',	1),
-('e50e51a7-d4df-4136-89b2-79d43a577721',	'admin',	'Aa12345678',	2),
-('3fdb245e-d7ea-4ea0-915e-d3eafb8b6b7e',	'string',	'string',	1);
+('de327707-cc73-4a0d-adc7-2ae760b9e648',	'antiho',	'4fad0bc2df9b917b93047316f9f852eb8760aea3',	1),
+('702a4657-4ee6-49f2-8bc4-bcb2d61f3e5b',	'user',	'4fad0bc2df9b917b93047316f9f852eb8760aea3',	1),
+('c4c0ea17-934d-4882-8f6d-a57706088d8d',	'admin',	'4fad0bc2df9b917b93047316f9f852eb8760aea3',	1);
 
 ALTER TABLE ONLY "public"."played_cards" ADD CONSTRAINT "fk_played_cards_turn" FOREIGN KEY (turn_id) REFERENCES turns(uuid) NOT DEFERRABLE;
 ALTER TABLE ONLY "public"."played_cards" ADD CONSTRAINT "fk_played_cards_card" FOREIGN KEY (card_id) REFERENCES cards(uuid) NOT DEFERRABLE;
