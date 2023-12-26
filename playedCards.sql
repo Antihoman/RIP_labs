@@ -27,8 +27,8 @@ CREATE TABLE "public"."turns" (
 ) WITH (oids = false);
 
 INSERT INTO "turns" ("uuid", "status", "creation_date", "formation_date", "completion_date", "moderator_id", "customer_id", "phase", "sending_status", "take_food") VALUES
-('ed170485-5acf-4779-9e88-786664a6d23e',	'сформирован',	'2023-12-22 20:50:44.309105',	NULL,	NULL,	NULL,	'de327707-cc73-4a0d-adc7-2ae760b9e648',	NULL,	NULL, 1),
-('19199780-b53b-426e-85a2-281b2cb634a5',	'сформирован',	'2023-12-22 20:51:40.225756',	NULL,	NULL,	NULL,	'de327707-cc73-4a0d-adc7-2ae760b9e648',	NULL,	NULL, 2),
+('ed170485-5acf-4779-9e88-786664a6d23e',	'сформирован',	'2023-12-22 20:50:44.309105',	'2023-12-22 20:54:44.309105',	NULL,	NULL,	'de327707-cc73-4a0d-adc7-2ae760b9e648',	NULL,	NULL, 1),
+('19199780-b53b-426e-85a2-281b2cb634a5',	'сформирован',	'2023-12-22 20:51:40.225756',	'2023-12-22 20:56:44.309105',	NULL,	NULL,	'de327707-cc73-4a0d-adc7-2ae760b9e648',	NULL,	NULL, 2),
 ('a3246620-e671-4602-871e-9ff0c84ec8be',	'сформирован',	'2023-12-22 20:52:34.068756',	NULL,	NULL,	NULL,	'702a4657-4ee6-49f2-8bc4-bcb2d61f3e5b',	NULL,	NULL, 0),
 ('7db3ffb5-1523-4813-b911-f19fec54e218',	'сформирован',	'2023-12-22 20:52:46.970346',	NULL,	NULL,	NULL,	'702a4657-4ee6-49f2-8bc4-bcb2d61f3e5b',	NULL,	NULL, 1);
 
