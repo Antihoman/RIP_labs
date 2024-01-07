@@ -8,15 +8,14 @@ import (
 	"lab1/internal/app/ds"
 	"lab1/internal/app/schemes"
 
-
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary		Получить всех получателей
-// @Tags		Получатели
-// @Description	Возвращает всех доуступных получателей с опциональной фильтрацией по ФИО
+// @Summary		Получить все карты
+// @Tags		карты
+// @Description	Возвращает всех доуступных карт с опциональной фильтрацией по названию
 // @Produce		json
-// @Param		fio query string false "ФИО для фильтрации"
+// @Param		name query string false "Название для фильтрации"
 // @Success		200 {object} schemes.GetAllCardsResponse
 // @Router		/api/cards [get]
 func (app *Application) GetAllCards(c *gin.Context) {
@@ -31,32 +30,25 @@ func (app *Application) GetAllCards(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	var draftTurn *ds.Turn = nil
-	if userId, exists := c.Get("userId"); exists {
-		draftTurn, err = app.repo.GetDraftTurn(userId.(string))
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-	}
 	response := schemes.GetAllCardsResponse{DraftTurn: nil, Cards: cards}
-	if draftTurn != nil {
-		response.DraftTurn = &schemes.TurnShort{UUID: draftTurn.UUID}
-		cardsCount, err := app.repo.CountCards(draftTurn.UUID)
+	if userId, exists := c.Get("userId"); exists {
+		draftTurn, err := app.repo.GetDraftTurn(userId.(string))
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		response.DraftTurn.CardCount = int(cardsCount)
+		if draftTurn != nil {
+			response.DraftTurn = &draftTurn.UUID
+		}
 	}
 	c.JSON(http.StatusOK, response)
 }
 
-// @Summary		Получить одного получателя
-// @Tags		Получатели
-// @Description	Возвращает более подробную информацию об одном получателе
+// @Summary		Получить одну карту
+// @Tags		карты
+// @Description	Возвращает более подробную информацию об одной карте
 // @Produce		json
-// @Param		id path string true "id получателя"
+// @Param		id path string true "id карты"
 // @Success		200 {object} ds.Card
 // @Router		/api/cards/{id} [get]
 func (app *Application) GetCard(c *gin.Context) {
@@ -72,16 +64,16 @@ func (app *Application) GetCard(c *gin.Context) {
 		return
 	}
 	if card == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("получатель не найден"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карта не найден"))
 		return
 	}
 	c.JSON(http.StatusOK, card)
 }
 
-// @Summary		Удалить получателя
-// @Tags		Получатели
-// @Description	Удаляет получателя по id
-// @Param		id path string true "id получателя"
+// @Summary		Удалить карту
+// @Tags		карты
+// @Description	Удаляет карту по id
+// @Param		id path string true "id карты"
 // @Success		200
 // @Router		/api/cards/{id} [delete]
 func (app *Application) DeleteCard(c *gin.Context) {
@@ -97,30 +89,34 @@ func (app *Application) DeleteCard(c *gin.Context) {
 		return
 	}
 	if card == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("получатель не найден"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карта не найден"))
 		return
-	}
-	card.ImageURL = nil
-	card.IsDeleted = true
+	}	
 	if card.ImageURL != nil {
 		if err := app.deleteImage(c, card.UUID); err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 	}
+	card.ImageURL = nil
+	card.IsDeleted = true
+	if err := app.repo.SaveCard(card); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
 	c.Status(http.StatusOK)
 }
 
-// @Summary		Добавить получателя
-// @Tags		Получатели
-// @Description	Добавить нового получателя
+// @Summary		Добавить карту
+// @Tags		карты
+// @Description	Добавить новую карту
 // @Accept		mpfd
-// @Param     	image formData file false "Изображение получателя"
-// @Param     	fio formData string true "ФИО" format:"string" maxLength:100
-// @Param     	email formData string true "Почта" format:"string" maxLength:100
-// @Param     	age formData int true "Возраст" format:"int"
-// @Param     	adress formData string true "Адрес" format:"string" maxLength:100
+// @Param     	image formData file false "Изображение карты"
+// @Param     	name formData string true "Название" format:"string" maxLength:100
+// @Param     	type formData string true "Тип" format:"string" maxLength:100
+// @Param     	need_food formData int true "Нужно еды" format:"int"
+// @Param     	description formData string true "Описание" format:"string" maxLength:100
 // @Success		200
 // @Router		/api/cards [post]
 func (app *Application) AddCard(c *gin.Context) {
@@ -152,17 +148,17 @@ func (app *Application) AddCard(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-// @Summary		Изменить получателя
-// @Tags		Получатели
-// @Description	Изменить данные полей о получателе
+// @Summary		Изменить карту
+// @Tags		карты
+// @Description	Изменить данные полей о карте
 // @Accept		mpfd
 // @Produce		json
-// @Param		id path string true "Идентификатор получателя" format:"uuid"
-// @Param		fio formData string false "ФИО" format:"string" maxLength:100
-// @Param		email formData string false "Почта" format:"string" maxLength:100
-// @Param		age formData int false "Возраст" format:"int"
-// @Param		image formData file false "Изображение получателя"
-// @Param		adress formData string false "Адрес" format:"string" maxLength:100
+// @Param		id path string true "Идентификатор карты" format:"uuid"
+// @Param     	image formData file false "Изображение карты"
+// @Param     	name formData string true "Название" format:"string" maxLength:100
+// @Param     	type formData string true "Тип" format:"string" maxLength:100
+// @Param     	need_food formData int true "Нужно еды" format:"int"
+// @Param     	description formData string true "Описание" format:"string" maxLength:100
 // @Router		/api/cards/{id} [put]
 func (app *Application) ChangeCard(c *gin.Context) {
 	var request schemes.ChangeCardRequest
@@ -181,7 +177,7 @@ func (app *Application) ChangeCard(c *gin.Context) {
 		return
 	}
 	if card == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("получатель не найден"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карта не найден"))
 		return
 	}
 
@@ -220,12 +216,12 @@ func (app *Application) ChangeCard(c *gin.Context) {
 	c.JSON(http.StatusOK, card)
 }
 
-// @Summary		Добавить в уведомление
-// @Tags		Получатели
-// @Description	Добавить выбранного получателя в черновик уведомления
+// @Summary		Добавить в ход
+// @Tags		карты
+// @Description	Добавить выбранную карту в черновик хода
 // @Produce		json
-// @Param		id path string true "id получателя"
-// @Success		200 {object} schemes.AddToTurnResp
+// @Param		id path string true "id карты"
+// @Success		200
 // @Router		/api/cards/{id}/add_to_turn [post]
 func (app *Application) AddToTurn(c *gin.Context) {
 	var request schemes.AddToTurnRequest
@@ -241,7 +237,7 @@ func (app *Application) AddToTurn(c *gin.Context) {
 		return
 	}
 	if card == nil {
-		c.AbortWithError(http.StatusNotFound, fmt.Errorf("получатель не найден"))
+		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карта не найден"))
 		return
 	}
 

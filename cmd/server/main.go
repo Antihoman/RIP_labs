@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-// @title Electronic notifications
+// @title Game Evolution
 // @version 1.0
 
 // @host 127.0.0.1:8080

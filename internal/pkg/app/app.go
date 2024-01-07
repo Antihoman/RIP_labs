@@ -1,8 +1,8 @@
 package app
 
 import (
-	"log"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,9 +16,9 @@ import (
 	"lab1/internal/app/role"
 
 	_ "lab1/docs"
-	"github.com/swaggo/files"       // swagger embed files
-	"github.com/swaggo/gin-swagger" // gin-swagger middleware
-	_ "lab1/docs"
+
+	swaggerFiles "github.com/swaggo/files"     // swagger embed files
+	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
 type Application struct {
@@ -35,33 +35,30 @@ func (app *Application) Run() {
 
 	r.Use(ErrorHandler())
 
-	// Услуги - получатели
 	api := r.Group("/api")
 	{
 		res := api.Group("/cards")
 		{
-			res.GET("/", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllCards)                     // Список с поиском
-			res.GET("/:id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetCard)            // Одна услуга
-			res.DELETE("/:id", app.WithAuthCheck(role.Moderator), app.DeleteCard)                         				// Удаление
-			res.PUT("/:id", app.WithAuthCheck(role.Moderator), app.ChangeCard)                            				// Изменение
-			res.POST("", app.WithAuthCheck(role.Moderator), app.AddCard)                                           				// Добавление
-			res.POST("/:id/add_to_turn", app.WithAuthCheck(role.Customer,role.Moderator), app.AddToTurn) 		// Добавление в заявку
+			res.GET("/", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllCards)
+			res.GET("/:id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetCard)
+			res.DELETE("/:id", app.WithAuthCheck(role.Moderator), app.DeleteCard)                              
+			res.PUT("/:id", app.WithAuthCheck(role.Moderator), app.ChangeCard)                                 
+			res.POST("", app.WithAuthCheck(role.Moderator), app.AddCard)                                        
+			res.POST("/:id/add_to_turn", app.WithAuthCheck(role.Customer, role.Moderator), app.AddToTurn)
 		}
 
-		// Заявки - уведомления
 		n := api.Group("/turns")
 		{
-			n.GET("/", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllTurns)                                         				  // Список (отфильтровать по дате формирования и статусу)
-			n.GET("/:id",app.WithAuthCheck(role.Customer, role.Moderator),  app.GetTurn)                             				  // Одна заявка
-			n.PUT("", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateTurn)                                	  // Изменение (добавление транспорта)
-			n.DELETE("", app.WithAuthCheck(role.Customer,role.Moderator), app.DeleteTurn)                                      				  // Удаление
-			n.DELETE("/delete_recipient/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromTurn) 	  // Изменеие (удаление услуг)
-			n.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)                                    				  // Сформировать создателем
-			n.PUT("/:id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)                         				  // Завершить отклонить модератором
+			n.GET("/", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllTurns)               
+			n.GET("/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetTurn)                 
+			n.PUT("", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateTurn)                     
+			n.DELETE("", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteTurn)                   
+			n.DELETE("/delete_card/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteFromTurn) 
+			n.PUT("/user_confirm", app.WithAuthCheck(role.Customer, role.Moderator), app.UserConfirm)       
+			n.PUT("/:id/moderator_confirm", app.WithAuthCheck(role.Moderator), app.ModeratorConfirm)         
 			n.PUT("/:id/sending", app.Sending)
 		}
 
-		// Пользователи (авторизация)
 		u := api.Group("/user")
 		{
 			u.POST("/sign_up", app.Register)

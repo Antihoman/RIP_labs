@@ -136,12 +136,12 @@ definitions:
 host: 127.0.0.1:8080
 info:
   contact: {}
-  title: Electronic notifications
+  title: Game Evolution
   version: "1.0"
 paths:
   /api/cards:
     get:
-      description: Возвращает всех доуступных получателей с опциональной фильтрацией
+      description: Возвращает всех доуступных карты с опциональной фильтрацией
         по ФИО
       parameters:
       - description: ФИО для фильтрации
@@ -155,15 +155,15 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.GetAllCardsResponse'
-      summary: Получить всех получателей
+      summary: Получить всех карты
       tags:
-      - Получатели
+      - карты
     post:
       consumes:
       - multipart/form-data
-      description: Добавить нового получателя
+      description: Добавить нового карты
       parameters:
-      - description: Изображение получателя
+      - description: Изображение карты
         in: formData
         name: image
         type: file
@@ -190,14 +190,14 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Добавить получателя
+      summary: Добавить карты
       tags:
-      - Получатели
+      - карты
   /api/cards/{id}:
     delete:
-      description: Удаляет получателя по id
+      description: Удаляет карты по id
       parameters:
-      - description: id получателя
+      - description: id карты
         in: path
         name: id
         required: true
@@ -205,13 +205,13 @@ paths:
       responses:
         "200":
           description: OK
-      summary: Удалить получателя
+      summary: Удалить карты
       tags:
-      - Получатели
+      - карты
     get:
-      description: Возвращает более подробную информацию об одном получателе
+      description: Возвращает более подробную информацию об одной карте
       parameters:
-      - description: id получателя
+      - description: id карты
         in: path
         name: id
         required: true
@@ -223,15 +223,15 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/ds.Card'
-      summary: Получить одного получателя
+      summary: Получить одного карты
       tags:
-      - Получатели
+      - карты
     put:
       consumes:
       - multipart/form-data
-      description: Изменить данные полей о получателе
+      description: Изменить данные полей о карте
       parameters:
-      - description: Идентификатор получателя
+      - description: Идентификатор карты
         in: path
         name: id
         required: true
@@ -248,7 +248,7 @@ paths:
         in: formData
         name: age
         type: integer
-      - description: Изображение получателя
+      - description: Изображение карты
         in: formData
         name: image
         type: file
@@ -259,14 +259,14 @@ paths:
       produces:
       - application/json
       responses: {}
-      summary: Изменить получателя
+      summary: Изменить карты
       tags:
-      - Получатели
+      - карты
   /api/cards/{id}/add_to_turn:
     post:
-      description: Добавить выбранного получателя в черновик уведомления
+      description: Добавить выбранную карту в черновик хода
       parameters:
-      - description: id получателя
+      - description: id карты
         in: path
         name: id
         required: true
@@ -278,9 +278,9 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.AddToTurnResp'
-      summary: Добавить в уведомление
+      summary: Добавить в ход
       tags:
-      - Получатели
+      - карты
   /api/turns:
     delete:
       description: Удаляет черновое карту
@@ -377,11 +377,11 @@ paths:
       summary: Подтвердить карту
       tags:
       - Ходы
-  /api/turns/delete_recipient/{id}:
+  /api/turns/delete_card/{id}:
     delete:
-      description: Удалить получателя из черновово ходы
+      description: Удалить карты из черновово ходы
       parameters:
-      - description: id получателя
+      - description: id карты
         in: path
         name: id
         required: true
@@ -393,7 +393,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemes.AllCardsResponse'
-      summary: Удалить получателя из черновово ходы
+      summary: Удалить карты из черновово ходы
       tags:
       - Ходы
   /api/turns/user_confirm:

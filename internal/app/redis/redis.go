@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-const servicePrefix = "recipients_notification_2."
+const servicePrefix = "cards_turn_2."
 
 type Client struct {
 	cfg    config.RedisConfig

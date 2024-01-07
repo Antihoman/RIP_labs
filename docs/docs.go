@@ -17,14 +17,14 @@ const docTemplate = `{
     "paths": {
         "/api/cards": {
             "get": {
-                "description": "Возвращает всех доуступных получателей с опциональной фильтрацией по ФИО",
+                "description": "Возвращает всех доуступных карты с опциональной фильтрацией по ФИО",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Получатели"
+                    "карты"
                 ],
-                "summary": "Получить всех получателей",
+                "summary": "Получить всех карты",
                 "parameters": [
                     {
                         "type": "string",
@@ -43,18 +43,18 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Добавить нового получателя",
+                "description": "Добавить нового карты",
                 "consumes": [
                     "multipart/form-data"
                 ],
                 "tags": [
-                    "Получатели"
+                    "карты"
                 ],
-                "summary": "Добавить получателя",
+                "summary": "Добавить карты",
                 "parameters": [
                     {
                         "type": "file",
-                        "description": "Изображение получателя",
+                        "description": "Изображение карты",
                         "name": "image",
                         "in": "formData"
                     },
@@ -96,18 +96,18 @@ const docTemplate = `{
         },
         "/api/cards/{id}": {
             "get": {
-                "description": "Возвращает более подробную информацию об одном получателе",
+                "description": "Возвращает более подробную информацию об одной карте",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Получатели"
+                    "карты"
                 ],
-                "summary": "Получить одного получателя",
+                "summary": "Получить одного карты",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id получателя",
+                        "description": "id карты",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -123,7 +123,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Изменить данные полей о получателе",
+                "description": "Изменить данные полей о карте",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -131,13 +131,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Получатели"
+                    "карты"
                 ],
-                "summary": "Изменить получателя",
+                "summary": "Изменить карты",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Идентификатор получателя",
+                        "description": "Идентификатор карты",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -162,7 +162,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Изображение получателя",
+                        "description": "Изображение карты",
                         "name": "image",
                         "in": "formData"
                     },
@@ -176,15 +176,15 @@ const docTemplate = `{
                 "responses": {}
             },
             "delete": {
-                "description": "Удаляет получателя по id",
+                "description": "Удаляет карты по id",
                 "tags": [
-                    "Получатели"
+                    "карты"
                 ],
-                "summary": "Удалить получателя",
+                "summary": "Удалить карты",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id получателя",
+                        "description": "id карты",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -199,18 +199,18 @@ const docTemplate = `{
         },
         "/api/cards/{id}/add_to_turn": {
             "post": {
-                "description": "Добавить выбранного получателя в черновик уведомления",
+                "description": "Добавить выбранную карту в черновик хода",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Получатели"
+                    "карты"
                 ],
-                "summary": "Добавить в уведомление",
+                "summary": "Добавить в ход",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id получателя",
+                        "description": "id карты",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -307,20 +307,20 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/turns/delete_recipient/{id}": {
+        "/api/turns/delete_card/{id}": {
             "delete": {
-                "description": "Удалить получателя из черновово ходы",
+                "description": "Удалить карты из черновово ходы",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Ходы"
                 ],
-                "summary": "Удалить получателя из черновово ходы",
+                "summary": "Удалить карты из черновово ходы",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id получателя",
+                        "description": "id карты",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -716,7 +716,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "127.0.0.1:8080",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
-	Title:            "Electronic notifications",
+	Title:            "Game Evolution",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

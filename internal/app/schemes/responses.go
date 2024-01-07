@@ -3,21 +3,15 @@ package schemes
 import (
 	"fmt"
 	"lab1/internal/app/ds"
-	"time"
 )
 
 type AllCardsResponse struct {
 	Cards []ds.Card `json:"cards"`
 }
 
-type TurnShort struct {
-	UUID      string `json:"uuid"`
-	CardCount int    `json:"card_count"`
-}
-
 type GetAllCardsResponse struct {
-	DraftTurn *TurnShort `json:"draft_turn"`
-	Cards     []ds.Card  `json:"cards"`
+	DraftTurn *string   `json:"draft_turn"`
+	Cards     []ds.Card `json:"cards"`
 }
 
 type AllTurnsResponse struct {
@@ -41,7 +35,7 @@ type TurnOutput struct {
 	CompletionDate *string `json:"completion_date"`
 	Moderator      *string `json:"moderator"`
 	Customer       string  `json:"customer"`
-	Phase          *string  `json:"turn_type"`
+	Phase          *string `json:"turn_type"`
 	SendingStatus  *string `json:"sending_status"`
 	TakeFood       uint    `json:"takefood"`
 }
@@ -79,18 +73,7 @@ type AddToTurnResp struct {
 	CardsCount int64 `json:"card_count"`
 }
 
-type LoginResp struct {
-	ExpiresIn   time.Duration `json:"expires_in"`
-	AccessToken string        `json:"access_token"`
-	TokenType   string        `json:"token_type"`
-}
-
-type SwaggerLoginResp struct {
-	ExpiresIn   int64  `json:"expires_in"`
+type AuthResp struct {
 	AccessToken string `json:"access_token"`
 	TokenType   string `json:"token_type"`
-}
-
-type RegisterResp struct {
-	Ok bool `json:"ok"`
 }

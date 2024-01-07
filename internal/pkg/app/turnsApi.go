@@ -50,11 +50,11 @@ func (app *Application) GetAllTurns(c *gin.Context) {
 	c.JSON(http.StatusOK, schemes.AllTurnsResponse{Turns: outputTurns})
 }
 
-// @Summary		Получить одно карту
+// @Summary		Получить один ход
 // @Tags		Ходы
-// @Description	Возвращает подробную информацию об ходы и его типе
+// @Description	Возвращает подробную информацию о ходы и его типе
 // @Produce		json
-// @Param		id path string true "id ходы"
+// @Param		id path string true "id хода"
 // @Success		200 {object} schemes.TurnResponse
 // @Router		/api/turns/{id} [get]
 func (app *Application) GetTurn(c *gin.Context) {
@@ -91,16 +91,16 @@ func (app *Application) GetTurn(c *gin.Context) {
 }
 
 type SwaggerUpdateTurnRequest struct {
-	TurnPhase string `json:"turn_type"`
+	TurnPhase string `json:"phase"`
 }
 
-// @Summary		Указать тип ходы
+// @Summary		Указать тип хода
 // @Tags		Ходы
-// @Description	Позволяет изменить тип чернового ходы и возвращает обновлённые данные
+// @Description	Позволяет изменить тип чернового хода и возвращает обновлённые данные
 // @Access		json
 // @Produce		json
-// @Param		turn_type body SwaggerUpdateTurnRequest true "Тип ходы"
-// @Success		200 {object} schemes.TurnOutput
+// @Param		turn_type body SwaggerUpdateTurnRequest true "Тип хода"
+// @Success		200
 // @Router		/api/turns [put]
 func (app *Application) UpdateTurn(c *gin.Context) {
 	var request schemes.UpdateTurnRequest
@@ -109,9 +109,8 @@ func (app *Application) UpdateTurn(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	// Получить черновую заявку
-	var turn *ds.Turn
 
+	var turn *ds.Turn
 	userId := getUserId(c)
 	turn, err = app.repo.GetDraftTurn(userId)
 	if err != nil {
@@ -123,7 +122,6 @@ func (app *Application) UpdateTurn(c *gin.Context) {
 		return
 	}
 
-	// Добавить тип
 	turn.Phase = &request.TurnPhase
 	if app.repo.SaveTurn(turn); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -133,14 +131,13 @@ func (app *Application) UpdateTurn(c *gin.Context) {
 	c.JSON(http.StatusOK, schemes.ConvertTurn(turn))
 }
 
-// @Summary		Удалить черновое карту
+// @Summary		Удалить черновой ход
 // @Tags		Ходы
-// @Description	Удаляет черновое карту
+// @Description	Удаляет черновой ход
 // @Success		200
 // @Router		/api/turns [delete]
 func (app *Application) DeleteTurn(c *gin.Context) {
 	var err error
-	// Получить черновую заявку
 	var turn *ds.Turn
 	userId := getUserId(c)
 	turn, err = app.repo.GetDraftTurn(userId)
@@ -161,13 +158,14 @@ func (app *Application) DeleteTurn(c *gin.Context) {
 	}
 	c.Status(http.StatusOK)
 }
-// @Summary		Удалить получателя из черновово ходы
+
+// @Summary		Удалить карту из чернового хода
 // @Tags		Ходы
-// @Description	Удалить получателя из черновово ходы
+// @Description	Удалить карту из чернового хода
 // @Produce		json
-// @Param		id path string true "id получателя"
-// @Success		200 {object} schemes.AllCardsResponse
-// @Router		/api/turns/delete_recipient/{id} [delete]
+// @Param		id path string true "id карты"
+// @Success		200
+// @Router		/api/turns/delete_card/{id} [delete]
 func (app *Application) DeleteFromTurn(c *gin.Context) {
 	var request schemes.DeleteFromTurnRequest
 	var err error
@@ -192,19 +190,13 @@ func (app *Application) DeleteFromTurn(c *gin.Context) {
 		return
 	}
 
-	cards, err := app.repo.GetTurnContent(turn.UUID)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(http.StatusOK, schemes.AllCardsResponse{Cards: cards})
+	c.Status(http.StatusOK)
 }
 
 // @Summary		Сформировать ход
 // @Tags		Ходы
-// @Description	Сформировать карту пользователем
-// @Success		200 {object} schemes.TurnOutput
+// @Description	Сформировать ход пользователем
+// @Success		200
 // @Router		/api/turns/user_confirm [put]
 func (app *Application) UserConfirm(c *gin.Context) {
 	userId := getUserId(c)
@@ -217,11 +209,11 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
-	
-	// if err := sendingRequest(turn.UUID); err != nil {
-	// 	c.AbortWithError(http.StatusInternalServerError, fmt.Errorf(`sending service is unavailable: {%s}`, err))
-	// 	return
-	// }
+
+	if err := sendingRequest(turn.UUID); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, fmt.Errorf(`sending service is unavailable: {%s}`, err))
+		return
+	}
 
 	sendingStatus := ds.SendingStarted
 	turn.SendingStatus = &sendingStatus
@@ -233,14 +225,16 @@ func (app *Application) UserConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, schemes.ConvertTurn(turn))
+
+	c.Status(http.StatusOK)
 }
-// @Summary		Подтвердить карту
+
+// @Summary		Подтвердить ход
 // @Tags		Ходы
-// @Description	Подтвердить или отменить карту модератором
+// @Description	Подтвердить или отменить ход модератором
 // @Param		id path string true "id ходы"
 // @Param		confirm body boolean true "подтвердить"
-// @Success		200 {object} schemes.TurnOutput
+// @Success		200
 // @Router		/api/turns/{id}/moderator_confirm [put]
 func (app *Application) ModeratorConfirm(c *gin.Context) {
 	var request schemes.ModeratorConfirmRequest
@@ -254,7 +248,7 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 	}
 
 	userId := getUserId(c)
-	turn, err := app.repo.GetTurnById(request.URI.TurnId,nil)
+	turn, err := app.repo.GetTurnById(request.URI.TurnId, nil)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -263,17 +257,16 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		c.AbortWithError(http.StatusNotFound, fmt.Errorf("карту не найдено"))
 		return
 	}
-	if turn.Status != ds.StatusFormed  {
-		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя изменить статус с \"%s\" на \"%s\"", turn.Status,  ds.StatusFormed ))
+	if turn.Status != ds.StatusFormed {
+		c.AbortWithError(http.StatusMethodNotAllowed, fmt.Errorf("нельзя изменить статус с \"%s\" на \"%s\"", turn.Status, ds.StatusFormed))
 		return
 	}
-
 
 	if *request.Confirm {
 		turn.Status = ds.StatusCompleted
 		now := time.Now()
 		turn.CompletionDate = &now
-	
+
 	} else {
 		turn.Status = ds.StatusRejected
 	}
@@ -283,12 +276,14 @@ func (app *Application) ModeratorConfirm(c *gin.Context) {
 		return
 	}
 	turn.Moderator = moderator
-	
+	turn.ModeratorId = &userId
+
 	if err := app.repo.SaveTurn(turn); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.JSON(http.StatusOK, schemes.ConvertTurn(turn))
+
+	c.Status(http.StatusOK)
 }
 
 func (app *Application) Sending(c *gin.Context) {
@@ -301,7 +296,6 @@ func (app *Application) Sending(c *gin.Context) {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-	
 
 	if request.Token != app.config.Token {
 		c.AbortWithStatus(http.StatusForbidden)
