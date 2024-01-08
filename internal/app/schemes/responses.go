@@ -35,9 +35,8 @@ type TurnOutput struct {
 	CompletionDate *string `json:"completion_date"`
 	Moderator      *string `json:"moderator"`
 	Customer       string  `json:"customer"`
-	Phase          *string `json:"turn_type"`
 	SendingStatus  *string `json:"sending_status"`
-	TakeFood       uint    `json:"takefood"`
+	TakeFood       *string `json:"takefood"`
 }
 
 func ConvertTurn(turn *ds.Turn) TurnOutput {
@@ -45,7 +44,7 @@ func ConvertTurn(turn *ds.Turn) TurnOutput {
 		UUID:          turn.UUID,
 		Status:        turn.Status,
 		CreationDate:  turn.CreationDate.Format("2006-01-02 15:04:05"),
-		Phase:         turn.Phase,
+		TakeFood:      turn.TakeFood,
 		SendingStatus: turn.SendingStatus,
 		Customer:      turn.Customer.Login,
 	}

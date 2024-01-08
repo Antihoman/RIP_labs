@@ -45,9 +45,7 @@ CREATE TABLE "public"."cards" (
 ) WITH (oids = false);
 
 INSERT INTO "cards" ("uuid", "image_url", "is_deleted", "type", "name", "description", "need_food") VALUES
-('f269cc75-9d07-4ded-bbb4-02536f742220',	'http://localhost:8080/image/img9.png',	'f',	'Хищник',	'Большой',	'Данное животное может быть съедено только большим хищником',	1),
-('c502737b-ec5c-41f6-b656-b8b08caedfc4',	'http://localhost:8080/image/img12.png',	'f',	'Не хищник',	'Большой',	'Сыграть одновременно на пару существ. Когда одно получит еду, то другое получит вге очереди',	2),
-('320877f2-702c-4c8a-8d47-f17bbc51af55',	'http://localhost:8080/image/img6.png',	'f',	'Хищник',	'Взаимодействие',	'Сыграть одновременно на пару существ. Когда одно получит еду, то другое получит вне очереди',	1);
+('8de64b32-006f-4d8c-9201-b4d1369e4830',	'http://localhost:9000/images/img1.jpg',	'f',	'Хищник',	'Большой',	'Данное животное может быть съедено только большим хищником',	1);
 
 DROP TABLE IF EXISTS "users";
 CREATE TABLE "public"."users" (

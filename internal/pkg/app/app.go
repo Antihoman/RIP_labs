@@ -63,7 +63,7 @@ func (app *Application) Run() {
 		{
 			u.POST("/sign_up", app.Register)
 			u.POST("/login", app.Login)
-			u.POST("/logout", app.Logout)
+			u.GET("/logout", app.Logout)
 		}
 
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

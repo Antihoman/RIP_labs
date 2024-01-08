@@ -122,7 +122,7 @@ func (app *Application) UpdateTurn(c *gin.Context) {
 		return
 	}
 
-	turn.Phase = &request.TurnPhase
+	turn.TakeFood = &request.TurnTakeFood
 	if app.repo.SaveTurn(turn); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

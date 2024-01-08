@@ -44,7 +44,7 @@ type TurnRequest struct {
 }
 
 type UpdateTurnRequest struct {
-	TurnPhase string `form:"turn_phase" json:"turn_phase" binding:"required,max=50"`
+	TurnTakeFood string `form:"turn_phase" json:"turn_phase" binding:"required,max=50"`
 }
 
 type DeleteFromTurnRequest struct {
