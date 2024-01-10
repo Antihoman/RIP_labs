@@ -21,4 +21,4 @@
 
 # Домашнее задание:
 - [Интерфес модератора](https://github.com/Antihoman/RIP_labs_frontend/tree/moderator-pages)
-- [РПЗ]()
+- [РПЗ](https://github.com/Antihoman/RIP_labs/blob/async_service/RPZ_Lukyanov_IU5-53B.docx)
