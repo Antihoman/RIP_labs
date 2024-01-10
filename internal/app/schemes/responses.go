@@ -43,19 +43,19 @@ func ConvertTurn(turn *ds.Turn) TurnOutput {
 	output := TurnOutput{
 		UUID:          turn.UUID,
 		Status:        turn.Status,
-		CreationDate:  turn.CreationDate.Format("2006-01-02 15:04:05"),
+		CreationDate:  turn.CreationDate.Format("2006-01-02 15:04"),
 		TakeFood:      turn.TakeFood,
 		SendingStatus: turn.SendingStatus,
 		Customer:      turn.Customer.Login,
 	}
 
 	if turn.FormationDate != nil {
-		formationDate := turn.FormationDate.Format("2006-01-02 15:04:05")
+		formationDate := turn.FormationDate.Format("2006-01-02 15:04")
 		output.FormationDate = &formationDate
 	}
 
 	if turn.CompletionDate != nil {
-		completionDate := turn.CompletionDate.Format("2006-01-02 15:04:05")
+		completionDate := turn.CompletionDate.Format("2006-01-02 15:04")
 		output.CompletionDate = &completionDate
 	}
 

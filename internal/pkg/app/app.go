@@ -39,7 +39,7 @@ func (app *Application) Run() {
 	{
 		res := api.Group("/cards")
 		{
-			res.GET("/", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllCards)
+			res.GET("", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetAllCards)
 			res.GET("/:id", app.WithAuthCheck(role.NotAuthorized, role.Customer, role.Moderator), app.GetCard)
 			res.DELETE("/:id", app.WithAuthCheck(role.Moderator), app.DeleteCard)                              
 			res.PUT("/:id", app.WithAuthCheck(role.Moderator), app.ChangeCard)                                 
@@ -49,7 +49,7 @@ func (app *Application) Run() {
 
 		n := api.Group("/turns")
 		{
-			n.GET("/", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllTurns)               
+			n.GET("", app.WithAuthCheck(role.Customer, role.Moderator), app.GetAllTurns)               
 			n.GET("/:id", app.WithAuthCheck(role.Customer, role.Moderator), app.GetTurn)                 
 			n.PUT("", app.WithAuthCheck(role.Customer, role.Moderator), app.UpdateTurn)                     
 			n.DELETE("", app.WithAuthCheck(role.Customer, role.Moderator), app.DeleteTurn)                   
