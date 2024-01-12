@@ -20,13 +20,13 @@ func StartServer() {
 
 	r.LoadHTMLGlob("templates/*")
 
-	r.GET("/services", func(c *gin.Context) {
+	r.GET("/cards", func(c *gin.Context) {
 		filter := c.Query("filter")
 		data := GetAllServices(filter)
 		c.HTML(http.StatusOK, "index.tmpl", data)
 	})
 
-	r.GET("/service/:index", func(c *gin.Context) {
+	r.GET("/card/:index", func(c *gin.Context) {
 		index := c.Param("index")
 		serviceIndex, err := strconv.Atoi(index)
 		if err != nil {

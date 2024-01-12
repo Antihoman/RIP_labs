@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-type Service struct {
+type Card struct {
 	ID 			int
 	Name        string
 	Description string
@@ -12,12 +12,12 @@ type Service struct {
 	ImageURL    string
 }
 
-type FilteredServices struct {
-	Services []Service
+type FilteredCards struct {
+	Cards []Card
 	Filter   string
 }
 
-var services = []Service{
+var cards = []Card{
 	{0, "Пугливое", "Описание карточки 1", "Развитие", "/image/img1.png"},
 	{1, "r-стратегия", "Описание карточки 2", "Установление кормовой базы", "/image/img2.png"},
 	{2, "Теплокровность", "Описание карточки 3", "Питание", "/image/img3.png"},
@@ -29,21 +29,21 @@ var services = []Service{
 	{8, "Теплокровность", "Описание карточки 3", "Питание", "/image/img9.png"},
 }
 
-func GetAllServices(filter string) FilteredServices {
-	var filteredServices []Service
+func GetAllServices(filter string) FilteredCards {
+	var filteredCards []Card
 
 	if filter == "" {
-		filteredServices = services
+		filteredCards = cards
 	} else {
-		for _, s := range services {
+		for _, s := range cards {
 			if containsIgnoreCase(s.Name, filter) {
-				filteredServices = append(filteredServices, s)
+				filteredCards = append(filteredCards, s)
 			}
 		}
 	}
 
-	return FilteredServices{
-		Services: filteredServices,
+	return FilteredCards{
+		Cards: filteredCards,
 		Filter:   filter,
 	}
 }
@@ -52,6 +52,6 @@ func containsIgnoreCase(s, substr string) bool {
 	return strings.Contains(strings.ToLower(s), strings.ToLower(substr))
 }
 
-func GetServiceByIndex(index int) Service {
-	return services[index]
+func GetServiceByIndex(index int) Card {
+	return cards[index]
 }
