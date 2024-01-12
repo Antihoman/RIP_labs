@@ -1,11 +1,11 @@
 # Тема
 **Компьютерная игра "Эволюция"**
 
-# Асинхронный сервис 
+# Репозиторий асинхронного сервиса: 
 - (https://github.com/Antihoman/RIP_labs_lab8/tree/async_services)
 
-# Фронтенд: 
+# Репозиторий фронтенда: 
 - (https://github.com/Antihoman/RIP_labs_frontend)
 
-# Мобильное приложение: 
+# Репозиторий нативного приложения: 
 - (https://github.com/Antihoman/RIP_labs_lab7)
